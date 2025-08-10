@@ -9,7 +9,6 @@ A **REST API** for managing restaurant-related tasks.
 This project is **a work in progress**, and features will be added progressively.
 
 The goal is to document my learning journey in building **Spring RESTful APIs** following the [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html).
-
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
 ---
@@ -41,6 +40,10 @@ The goal is to document my learning journey in building **Spring RESTful APIs** 
 - Authentication (Spring Security, JWT, OAuth2)
 - Product, Order, Product Photo, Groups, Users, Permissions
 - Deployment for public access
+- TESTS !!! 
+
+- Javadocs for implemented classes.
+> **Note:** I recently started uploading this project to GitHub. I had no initial plans to share it, but decided to start somewhere—therefore, not all classes are documented yet.
 
 ---
 
