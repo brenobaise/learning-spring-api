@@ -1,7 +1,7 @@
 # **Food Ordering & Management API (Spring Boot)**
 
 ![Java](https://img.shields.io/badge/Java-17%2B-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)
 ![MySQL](https://img.shields.io/badge/MySQL-8%2B-orange)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -84,6 +84,8 @@ The API is designed with **Domain Driven Design (DDD)** principles, organized in
 ---
 
 ## **Getting Started**
+> **Note:** Eventually I will update this to a more thorough explanation of how to get a database working.
+> Also, I plan to migrate to Postgres.
 
 ### **1) Database Configuration (MySQL – localhost)**
 Ensure MySQL is installed and a database is created.  
@@ -101,6 +103,8 @@ spring.jpa.show-sql=true
 ```
 
 > **Note:** Hibernate will automatically create the tables on first run.
+
+I have also provided a `import.sql` file to generate some data into the database, feel free to play around with it.
 
 ---
 
