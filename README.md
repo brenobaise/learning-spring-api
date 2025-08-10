@@ -1,53 +1,91 @@
-# Food Ordering & Management API (Spring Boot)
+# **Food Ordering & Management API (Spring Boot)**
 
-A REST API for managing restaurant related tasks. This project is a work in progress, and not all features may be available yet.
-I am updating the documentation as I progress through the workload, but it's fairly simple to get it up and running.
+![Java](https://img.shields.io/badge/Java-17%2B-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-8%2B-orange)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-The aim of this project is for me to document my learning progress of Spring RESTful API's according to [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html).
+A **REST API** for managing restaurant-related tasks.  
+This project is **a work in progress**, and features will be added progressively.
 
-However, if you are a frontend developer and is in need of an API to either showcase your frontend skills or just learn like I am doing, feel free to use this API.
+The goal is to document my learning journey in building **Spring RESTful APIs** following the [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html).
 
-Domain modeled with Domain Driven Development aggregates:
--   **Restaurant, Kitchen, Product, Payment Method, Order, User, Group, Permission, City, State**.  
+> If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
 ---
 
-## What's currently implemented:
-The project is still under development but there are some endpoints exposed already.
-- CRUD operations for **Restaurants & Kitchens**: 
-- CRUD operations for **States & Cities**.
+## **Table of Contents**
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Class Diagram](#class-diagram)
+- [Getting Started](#getting-started)
+    - [Database Configuration](#1-database-configuration-mysql-localhost)
+    - [Run the Application](#2-run-the-application)
+- [API Reference](#api-reference)
+- [Example Requests](#example-requests)
+- [Roadmap](#roadmap)
+- [License](#license)
 
-## To be Implemented:
-- **Upcoming** : GlobalException handler, a well establish response/request format.
-- Authentication with Spring Security, JWT, OAUTH2
-- Product, Order, ProductPhoto, Groups, Users, Permissions
-- Some sort of deployment for ease of use.
-## Tech Stack
-- **Java 17+**, **Spring Boot** (Web, Validation, Data JPA)
-- **MySQL 8+** (localhost)
-- Build: **Maven** 
+---
 
-## Architecture
-This section describes how the overall architecture will operate.
-- **Aggregates**
-    - **Restaurant** owns its **Address**, relates to a **Kitchen**, supports multiple **Payment Methods**, and contains **Products** and responsible **Users**.
-    - **Product** has a **ProductPhoto** (file name, description, content type, size).
-    - **Order** belongs to a **Restaurant**, a **User** (customer), and a **Payment Method**; contains **Order Items**.
-    - **User ↔ Group ↔ Permission**: many-to-many for RBAC.
-    - **City** belongs to a **State**.
-- **Layers**
-    - `api/` (controllers, DTOs, request/response models)
-    - `domain/` (entities, value objects, services, exceptions)
-    - `infra/` (repositories, configuration, storage adapters)
+## **Features**
 
-### Class Diagram : Overall Archicture
+### ✅ Currently Implemented
+- CRUD operations for:
+    - **Restaurants & Kitchens**
+    - **States & Cities**
+
+### 🚧 Upcoming Features
+- Global exception handler with standardized request/response formats
+- Authentication (Spring Security, JWT, OAuth2)
+- Product, Order, Product Photo, Groups, Users, Permissions
+- Deployment for public access
+
+---
+
+## **Tech Stack**
+- **Java** 17+
+- **Spring Boot** (Web, Validation, Data JPA)
+- **MySQL** 8+ (local instance)
+- Build Tool: **Maven**
+
+---
+
+## **Architecture**
+
+The API is designed with **Domain Driven Design (DDD)** principles, organized into layers:
+
+### **Aggregates**
+- **Restaurant**:
+    - Owns an **Address**
+    - Relates to a **Kitchen**
+    - Supports multiple **Payment Methods**
+    - Contains **Products** and **Responsible Users**
+- **Product**: Has a **ProductPhoto** (filename, description, content type, size)
+- **Order**: Linked to a **Restaurant**, **User** (customer), and **Payment Method**; contains **Order Items**
+- **User ↔ Group ↔ Permission**: Many-to-many relationship for RBAC
+- **City**: Belongs to a **State**
+
+### **Layered Structure**
+- `api/` → Controllers, DTOs, Request/Response Models
+- `domain/` → Entities, Value Objects, Services, Exceptions
+- `infra/` → Repositories, Configuration, Storage Adapters
+
+---
+
+## **Class Diagram**
 ![Class Diagram](src/images/classdiagram.png)
 
-## Getting Started
+---
 
-### 1) MySQL (localhost)
-Assuming you have installed MySQL Workbench and have created a database, you can  add the following to your `application.properties` and Hibernate will create the tables for you.
-```
+## **Getting Started**
+
+### **1) Database Configuration (MySQL – localhost)**
+Ensure MySQL is installed and a database is created.  
+Add your configuration to `application.properties`:
+
+```properties
 spring.application.name=dbname
 spring.datasource.url=jdbc:mysql://localhost/dbname?createDatabaseIfNotExist=true&serverTimezone=UTC
 spring.datasource.username=<username>
@@ -56,82 +94,122 @@ spring.datasource.password=<password>
 spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=create
 spring.jpa.show-sql=true
-
 ```
 
-## Run the app
-#### Maven
- `./mvnw spring-boot:run`
-
-### API Overview
-
-### Kitchens
-| Method | Endpoint               | Description       |
-|--------|------------------------|-------------------|
-| GET    | `/kitchens`             | List all kitchens |
-| POST   | `/kitchens`             | Create a kitchen  |
-| GET    | `/kitchens/{id}`        | Get a kitchen by ID |
-| PUT    | `/kitchens/{id}`        | Update a kitchen  |
-| DELETE | `/kitchens/{id}`        | Delete a kitchen  |
+> **Note:** Hibernate will automatically create the tables on first run.
 
 ---
 
-### Restaurants
-| Method | Endpoint                 | Description         |
-|--------|--------------------------|---------------------|
-| GET    | `/restaurants`           | List all restaurants |
-| POST   | `/restaurants`           | Create a restaurant  |
-| GET    | `/restaurants/{id}`      | Get a restaurant by ID |
-| PUT    | `/restaurants/{id}`      | Update a restaurant  |
-| DELETE | `/restaurants/{id}`      | Delete a restaurant  |
+### **2) Run the Application**
+Using Maven wrapper:
+```bash
+./mvnw spring-boot:run
+```
 
 ---
 
-### States
-| Method | Endpoint                 | Description        |
-|--------|--------------------------|--------------------|
-| GET    | `/states`                 | List all states    |
-| POST   | `/states`                 | Create a state     |
-| GET    | `/states/{id}`            | Get a state by ID  |
-| PUT    | `/states/{id}`            | Update a state     |
-| DELETE | `/states/{id}`            | Delete a state     |
+## **API Reference**
+
+### **Kitchens**
+| Method | Endpoint         | Description           |
+|--------|------------------|-----------------------|
+| GET    | `/kitchens`      | List all kitchens     |
+| POST   | `/kitchens`      | Create a kitchen      |
+| GET    | `/kitchens/{id}` | Get a kitchen by ID   |
+| PUT    | `/kitchens/{id}` | Update a kitchen      |
+| DELETE | `/kitchens/{id}` | Delete a kitchen      |
 
 ---
 
-### Cities
-| Method | Endpoint                 | Description        |
-|--------|--------------------------|--------------------|
-| GET    | `/cities`                 | List all cities    |
-| POST   | `/cities`                 | Create a city      |
-| GET    | `/cities/{id}`            | Get a city by ID   |
-| PUT    | `/cities/{id}`            | Update a city      |
-| DELETE | `/cities/{id}`            | Delete a city      |
+### **Restaurants**
+| Method | Endpoint             | Description            |
+|--------|----------------------|------------------------|
+| GET    | `/restaurants`       | List all restaurants   |
+| POST   | `/restaurants`       | Create a restaurant    |
+| GET    | `/restaurants/{id}`  | Get a restaurant by ID |
+| PUT    | `/restaurants/{id}`  | Update a restaurant    |
+| DELETE | `/restaurants/{id}`  | Delete a restaurant    |
 
+---
 
+### **States**
+| Method | Endpoint         | Description         |
+|--------|------------------|---------------------|
+| GET    | `/states`        | List all states     |
+| POST   | `/states`        | Create a state      |
+| GET    | `/states/{id}`   | Get a state by ID   |
+| PUT    | `/states/{id}`   | Update a state      |
+| DELETE | `/states/{id}`   | Delete a state      |
 
+---
 
-## Roadmap
+### **Cities**
+| Method | Endpoint         | Description         |
+|--------|------------------|---------------------|
+| GET    | `/cities`        | List all cities     |
+| POST   | `/cities`        | Create a city       |
+| GET    | `/cities/{id}`   | Get a city by ID    |
+| PUT    | `/cities/{id}`   | Update a city       |
+| DELETE | `/cities/{id}`   | Delete a city       |
 
-- [ ] **Authentication & Authorization**  
-  Implement JWT-based authentication with role management via Groups/Permissions.
+---
 
-- [ ] **Pagination, Sorting, and Filtering**  
-  Add pagination, sorting, and advanced filtering capabilities for all list endpoints.
+## **Example Requests**
 
-- [ ] **File Storage Abstraction**  
-  Support product photo storage with interchangeable adapters (Local / Amazon S3).
+### Create a Kitchen
+**Request**
+```http
+POST /kitchens
+Content-Type: application/json
 
-- [ ] **Input/Output DTOs & Validation**  
-  Introduce DTOs for input/output with validation and standardized problem-details error responses.
+{
+  "name": "Italian Kitchen"
+}
+```
 
-- [ ] **Database Migrations**  
-  Manage schema changes using Flyway for version-controlled database migrations.
+**Response**
+```json
+{
+  "id": 1,
+  "name": "Italian Kitchen"
+}
+```
 
-- [ ] **Caching**  
-  Add caching for read-heavy endpoints (e.g., kitchens, products) to improve performance.
+---
 
-- [ ] **Observability**  
-  Implement request logging, metrics, and tracing for better monitoring and debugging.
+### Get All Restaurants
+**Request**
+```http
+GET /restaurants
+```
 
-- [ ] **Production-Ready Configuration**  
-  Harden configurations and add profiles for production environments.
+**Response**
+```json
+[
+  {
+    "id": 1,
+    "name": "Pizza Palace",
+    "kitchenId": 1
+  },
+  {
+    "id": 2,
+    "name": "Sushi World",
+    "kitchenId": 2
+  }
+]
+```
+
+---
+
+## **Roadmap**
+- [ ] **Authentication & Authorization** – JWT-based authentication with role-based access control
+- [ ] **Pagination, Sorting, Filtering** for all list endpoints
+- [ ] **File Storage Abstraction** – Product photos with local/S3 storage
+- [ ] **DTOs & Validation** – Standardized request/response models with validation
+- [ ] **Database Migrations** – Version-controlled schema changes with Flyway
+- [ ] **Caching** – For read-heavy endpoints like kitchens/products
+- [ ] **Observability** – Logging, metrics, tracing
+- [ ] **Production Configuration** – Secure, profile-based configurations
+
+---
+
