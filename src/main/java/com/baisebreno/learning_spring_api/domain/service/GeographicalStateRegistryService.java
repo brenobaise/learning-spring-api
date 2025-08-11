@@ -9,6 +9,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class is responsible for persisting changes on the GeographicalState Model.
+ * It can save and remove an entity.
+ */
 @Service
 public class GeographicalStateRegistryService {
 
@@ -21,7 +25,7 @@ public class GeographicalStateRegistryService {
 
     public void remove(Long stateId){
         try{
-            stateRepository.remove(stateId);
+            stateRepository.deleteById(stateId);
 
         }catch (EmptyResultDataAccessException e){
 

@@ -22,14 +22,23 @@ public class CityController {
     @Autowired
     private CityRegistryService cityRegistryService;
 
+    /**
+     * Returns all {@link City} records from the database.
+     * @return a List of {@link City} entities.
+     */
     @GetMapping
     public ResponseEntity<List<City>> getAll(){
-        return ResponseEntity.ok(cityRepository.getAll());
+        return ResponseEntity.ok(cityRepository.findAll());
     }
 
+    /**
+     * Searches for an entity with a given id.
+     * @param id the id of the target entity.
+     * @return {@code 200 | 404}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<City> find(@PathVariable Long id){
-        City city = cityRepository.getById(id);
+        City city = cityRepository.findById(id).orElse(null);
 
         if(city != null){
             return ResponseEntity.ok(city);
@@ -37,6 +46,11 @@ public class CityController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Persists a new {@link City} entity into the database.
+     * @param city the representational model carrying the new entity.
+     * @return {@code 201 | 404}
+     */
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<?> create(@RequestBody City city){
@@ -50,9 +64,15 @@ public class CityController {
         }
     }
 
+    /**
+     * Updates a {@link City} entity by a given id.
+     * @param id the id of the target entity.
+     * @param city the representational model carrying the new fields.
+     * @return  {@code 200 | 404}
+     */
     @PutMapping("/{id}")
     public ResponseEntity<City> update(@PathVariable Long id, @RequestBody City city){
-        City foundCity = cityRepository.getById(id);
+        City foundCity = cityRepository.findById(id).orElse(null);
 
         if(foundCity != null){
             BeanUtils.copyProperties(city, foundCity, "id");
@@ -64,6 +84,11 @@ public class CityController {
 
     }
 
+    /**
+     * Deletes an entity from the database by a given id.
+     * @param id the id of the target entity.
+     * @return {@code 204 | 404 | 409} status code.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id){
         try{

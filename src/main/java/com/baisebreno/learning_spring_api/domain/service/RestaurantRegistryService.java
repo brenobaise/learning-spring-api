@@ -8,6 +8,10 @@ import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service is responsible for persisting changes on the Restaurant Model.
+ * This class can save and remove an entity.
+ */
 @Service
 public class RestaurantRegistryService {
     @Autowired

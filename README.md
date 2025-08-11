@@ -9,6 +9,12 @@ A **REST API** for managing restaurant-related tasks.
 This project is **a work in progress**, and features will be added progressively.
 
 The goal is to document my learning journey in building **Spring RESTful APIs** following the [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html).
+
+My future plans are:
+- To add Spring Security.
+- To add another database provider, like Postgresql
+- to add Flyway for database migrations.
+- to add api documentaion like Swagger
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
 ---

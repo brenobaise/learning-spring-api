@@ -40,6 +40,11 @@ public class KitchenController {
     }
 
 
+    /**
+     * Finds a {@link Kitchen} record based on a given id.
+     * @param id the id of the target entity.
+     * @return {@code 200 | 404 } status code
+     */
     @GetMapping("{id}")
     private ResponseEntity<Kitchen> find(@PathVariable Long id){
         Optional<Kitchen> kitchen = kitchenRepository.findById(id);
@@ -50,6 +55,11 @@ public class KitchenController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Adds a new record of type {@link Kitchen} to the database.
+     * @param kitchen the representational model carrying the Entity data.
+     * @return {@code 201} status code.
+     */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     private Kitchen create(@RequestBody Kitchen kitchen){
@@ -57,6 +67,12 @@ public class KitchenController {
 
     }
 
+    /**
+     * Updates a {@link Kitchen} entity based on a given id.
+     * @param id the id of the target entity.
+     * @param kitchen The representational model carrying the new properties.
+     * @return {@code 200 | 404} status code
+     */
     @PutMapping("/{id}")
     private ResponseEntity<Kitchen> update(@PathVariable Long id, @RequestBody Kitchen kitchen){
         Optional<Kitchen> foundKitchen = kitchenRepository.findById(id);
@@ -72,6 +88,11 @@ public class KitchenController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Removes a {@link Kitchen } entity from the database by using an id.
+     * @param id the id of the target entity.
+     * @return {@code 204 | 404 | 409 } status code.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Kitchen> delete(@PathVariable Long id){
         try {

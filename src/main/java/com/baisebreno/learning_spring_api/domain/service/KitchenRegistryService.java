@@ -9,6 +9,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service class is responsible for persisting changes on the Kitchen model.
+ * This service can save an entity and remove by id.
+ */
 @Service
 public class KitchenRegistryService {
 

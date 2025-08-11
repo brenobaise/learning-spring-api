@@ -11,6 +11,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class holds the responsibility of persisting changes on the City model.
+ * It can save an entity and remove it. It also has a {@link CityRepository} and {@link GeographicalStateRepository} as a dependency.
+ */
 @Service
 public class CityRegistryService {
 
@@ -22,13 +26,9 @@ public class CityRegistryService {
 
     public City save(City city){
         Long stateId = city.getState().getId();
-        GeographicalState state = stateRepository.getById(stateId);
-
-        if(state == null){
-            throw new EntityNotFoundException(
-                    String.format("State with id %d not found",stateId)
-            );
-        }
+        GeographicalState state = stateRepository.findById(stateId)
+                .orElseThrow( () -> new EntityNotFoundException(
+                String.format("State with id %d not found",stateId)));
 
         city.setState(state);
 
@@ -37,7 +37,7 @@ public class CityRegistryService {
 
     public void remove(Long cityId){
         try{
-            cityRepository.remove(cityId);
+            cityRepository.deleteById(cityId);
         }catch (EmptyResultDataAccessException e){
             throw new EntityNotFoundException(
                     String.format("City with code %d , not found", cityId));

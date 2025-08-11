@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/states")
@@ -27,29 +28,46 @@ public class GeographicalStateController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GeographicalState> getAll(){
-        return stateRepository.getAll();
+        return stateRepository.findAll();
     }
 
+    /**
+     * Searches the database for an {@link GeographicalState} entity by a given id.
+     * @param id the id of the target entity.
+     * @return {@code 200  | 404} status code.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<GeographicalState> find(@PathVariable Long id){
-        GeographicalState foundState = stateRepository.getById(id);
+        Optional<GeographicalState> foundState = stateRepository.findById(id);
 
-        if(foundState != null){
-            return ResponseEntity.ok(foundState);
+        if(foundState.isPresent()){
+            return ResponseEntity.ok(foundState.get());
         }
 
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Persists a new {@link GeographicalState} entity into the database.
+     * @param state the representational model carrying the new entity.
+     * @return {@code 200} status code.
+     */
     @PostMapping()
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<GeographicalState> create(@RequestBody GeographicalState state){
         return ResponseEntity.ok(stateRegistryService.save(state));
     }
 
+
+    /**
+     * Updates an entity by a given id.
+     * @param id the id of the target entity.
+     * @param state the representational model carrying the new values.
+     * @return {@code 200 | 404}
+     */
     @PutMapping("/{id}")
     public ResponseEntity<GeographicalState> update(@PathVariable Long id, @RequestBody GeographicalState state){
-        GeographicalState foundState = stateRepository.getById(id);
+        GeographicalState foundState = stateRepository.findById(id).orElse(null);
 
         if(foundState != null){
             BeanUtils.copyProperties(state, foundState, "id");
@@ -59,6 +77,11 @@ public class GeographicalStateController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Removes an entity by a given id.
+     * @param id the id of the target entity.
+     * @return {@code  204 | 404 | 409}
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id){
         try{
