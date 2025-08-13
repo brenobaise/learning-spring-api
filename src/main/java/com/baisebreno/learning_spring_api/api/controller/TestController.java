@@ -4,8 +4,7 @@ import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
-import com.baisebreno.learning_spring_api.infrastructure.repository.spec.RestaurantContainingName;
-import com.baisebreno.learning_spring_api.infrastructure.repository.spec.RestaurantWithFreeDeliverySpec;
+import com.baisebreno.learning_spring_api.infrastructure.repository.spec.RestaurantSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,9 +68,11 @@ public class TestController {
      */
     @GetMapping("/restaurants/free-delivery")
     public List<Restaurant> findByFreeDelivery(String name){
-        var withFreeDelivery = new RestaurantWithFreeDeliverySpec();
-        var containingName = new RestaurantContainingName(name);
-        return restaurantRepository.findAll(withFreeDelivery.and(containingName));
+
+        return restaurantRepository.findAll(
+                RestaurantSpecs.withFreeDeliveryRate()
+                .and(RestaurantSpecs.withSimilarName(name))
+        );
     }
 
 }
