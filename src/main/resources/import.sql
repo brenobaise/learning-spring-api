@@ -4,6 +4,14 @@ INSERT INTO restaurant (name, delivery_rate, kitchen_id ) VALUES ('The Internati
 INSERT INTO restaurant (name, delivery_rate, kitchen_id) VALUES ('The Deliver', 12.30, 1);
 INSERT INTO restaurant (name, delivery_rate, kitchen_id) VALUES ('The TukTuk', 110.30, 2);
 
+
+insert into kitchen ( name) values ('Tailandesa');
+insert into kitchen ( name) values ( 'Indiana');
+
+insert into restaurant (name, delivery_rate, kitchen_id)values ( 'Thai Gourmet', 10, 1);
+insert into restaurant (name, delivery_rate, kitchen_id) values ( 'Thai Delivery', 9.50, 3);
+insert into restaurant (name, delivery_rate, kitchen_id) values ( 'Tuk Tuk Comida Indiana', 15, 4);
+
 insert into  geographical_state (id, name)values (1, 'Minas Gerais');
 insert into geographical_state  (id, name)values (2, 'São Paulo');
 insert into geographical_state  (id, name) values (3, 'Ceará');
