@@ -1,6 +1,7 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,8 +29,9 @@ public class Restaurant {
 
     private BigDecimal deliveryRate;
 
-
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne() // fetch = FetchType.LAZY only fetches when needed
+//    @JsonIgnoreProperties("hibernateLazyInitializer")
     @JoinColumn(name = "kitchen_id", nullable = false)
     private Kitchen kitchen;
 
@@ -47,11 +49,11 @@ public class Restaurant {
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime lastUpdatedDate;
 
-    @JsonIgnore
+//    @JsonIgnore
     @JoinTable(name = "restaurant_payment_types",
     joinColumns = @JoinColumn(name = "restaurant_id"),
     inverseJoinColumns = @JoinColumn(name = "payment_types_id"))
-    @ManyToMany
+    @ManyToMany()
     private List<PaymentType> paymentTypes = new ArrayList<>();
 
     @JsonIgnore

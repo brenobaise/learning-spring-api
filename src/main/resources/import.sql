@@ -17,7 +17,7 @@ INSERT INTO city (id, name, state_id) VALUES (4, 'Campinas', 2);
 INSERT INTO city (id, name, state_id) VALUES (5, 'Fortaleza', 3);
 
 -- Restaurants
-INSERT INTO restaurant (id, name, delivery_rate, kitchen_id, registered_date, last_updated_date, address_city_id, address_postcode, address_street, address_number, address_county) VALUES (1, 'Thai Gourmet', 10, 1, utc_timestamp, utc_timestamp, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+INSERT INTO restaurant (id, name, delivery_rate, kitchen_id, registered_date, last_updated_date, address_city_id, address_postcode, address_street, address_number, address_county) VALUES (1, 'The Thai', 10, 1, utc_timestamp, utc_timestamp, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
 INSERT INTO restaurant (id, name, delivery_rate, kitchen_id, registered_date, last_updated_date) VALUES (2, 'Thai Delivery', 9.50, 1, utc_timestamp, utc_timestamp);
 INSERT INTO restaurant (id, name, delivery_rate, kitchen_id, registered_date, last_updated_date) VALUES (3, 'Tuk Tuk Comida Indiana', 15, 2, utc_timestamp, utc_timestamp);
 INSERT INTO restaurant (id, name, delivery_rate, kitchen_id, registered_date, last_updated_date) VALUES (4, 'Java Steakhouse', 12, 3, utc_timestamp, utc_timestamp);
@@ -35,7 +35,7 @@ INSERT INTO permission (id, name, description) VALUES (2, 'EDITAR_COZINHAS', 'Pe
 
 -- Restaurant ↔ Payment type mapping
 INSERT INTO restaurant_payment_types (restaurant_id, payment_types_id) VALUES (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3);
-insert into restaurant_payment_types (restaurant_id, payment_types_id) values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3), (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
+insert into restaurant_payment_types (restaurant_id, payment_types_id) values (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
 -- Products
 INSERT INTO product (name, description, price, active, restaurant_id) VALUES ('Sweet and Sour Pork', 'Delicious pork meat in a special sauce', 78.90, 1, 1);
 INSERT INTO product (name, description, price, active, restaurant_id) VALUES ('Thai Shrimp', '16 large shrimps in a spicy sauce', 110, 1, 1);
