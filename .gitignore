@@ -3,7 +3,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 src/main/resources/application.properties
-src/main/resources/flyway.properties
+flyway.conf
 ### STS ###
 .apt_generated
 .classpath

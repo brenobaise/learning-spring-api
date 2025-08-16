@@ -18,7 +18,7 @@ public interface RestaurantRepository extends
               select distinct r
               from Restaurant r
               join fetch r.kitchen
-              left join fetch r.paymentTypes
+              left join fetch r.paymentMethods
             """)
     List<Restaurant> findAll();
 

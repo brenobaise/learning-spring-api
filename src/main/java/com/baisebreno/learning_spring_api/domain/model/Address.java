@@ -17,10 +17,8 @@ public class Address {
     @Column(name = "address_number")
     private String number;
 
-    @Column(name = "address_street_ext")
-    private String streetExtension;
 
-    @Column(name = "address_county")
+    @Column(name = "address_district")
     private String county;
 
     @ManyToOne(fetch = FetchType.LAZY)
