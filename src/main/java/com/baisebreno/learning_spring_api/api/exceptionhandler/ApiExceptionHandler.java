@@ -11,39 +11,45 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 
 /**
- * {@code ApiExceptionHandler} is a global exception handler for the API.
- * <p>
- * It centralizes the handling of domain-specific exceptions (e.g., {@link EntityNotFoundException},
- * {@link EntityInUseException}, {@link BusinessException}) and ensures a consistent
- * response structure across the API.
- * </p>
+ * Global API exception handler that produces RFC 7807-style error responses.
  *
- * <p>It extends {@link ResponseEntityExceptionHandler}, which provides default
- * handling for Spring MVC exceptions, and overrides {@code handleExceptionInternal}
- * to format error responses into a unified {@code Problem} object.</p>
+ * <p>This component centralizes mapping of domain exceptions to HTTP responses,
+ * using a {@link Problem} payload shaped after the Problem Details format
+ * (RFC 7807). It also overrides {@link #handleExceptionInternal(Exception, Object, HttpHeaders, HttpStatus, WebRequest)}
+ * to enforce a consistent response body even for framework-raised exceptions.</p>
  *
- * <h2>Responsibilities:</h2>
+ * <h2>Responsibilities</h2>
  * <ul>
- *     <li>Catch and map domain exceptions to appropriate HTTP status codes.</li>
- *     <li>Build a {@code Problem} object with timestamp and error message.</li>
- *     <li>Provide consistent error response format across the API.</li>
+ *   <li>Translate {@link EntityNotFoundException} to 404 Not Found.</li>
+ *   <li>Translate {@link EntityInUseException} to 409 Conflict.</li>
+ *   <li>Translate {@link BusinessException} to 400 Bad Request.</li>
+ *   <li>Build a {@link Problem} with {@code type}, {@code title}, {@code status}, and {@code detail} fields.</li>
  * </ul>
+ *
+ * <h2>Response shape</h2>
+ * <p>Example JSON:</p>
+ * <pre>{@code
+ * {
+ *   "type": "https://algafood.co.uk/entity-not-found",
+ *   "title": "Entity Not Found",
+ *   "status": 404,
+ *   "detail": "Restaurant with id=10 does not exist"
+ * }
+ * }</pre>
  */
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
-     * Handles cases where an entity is not found in the system.
-     * <p>
-     * Typically thrown when a resource requested by the client does not exist.
-     * </p>
+     * Handles resource-not-found scenarios.
      *
-     * @param ex      the thrown {@link EntityNotFoundException}.
-     * @param request the current web request.
-     * @return a {@link ResponseEntity} containing a {@code Problem} object and a {@code 404 Not Found} status.
+     * <p>Typically thrown when the requested entity does not exist in persistence.</p>
+     *
+     * @param ex      the domain exception describing the missing entity.
+     * @param request the current request context.
+     * @return a 404 Not Found response containing a {@link Problem} body.
      */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleGeographicalStateNotFoundException(
@@ -52,21 +58,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemType problemType = ProblemType.ENTITY_NOT_FOUND;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
-                .build();
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     /**
-     * Handles cases where an entity cannot be deleted because it is in use.
-     * <p>
-     * Example: trying to delete a state that is still linked to a city.
-     * </p>
+     * Handles integrity/conflict violations where an entity cannot be removed or altered
+     * due to existing references or constraints.
      *
-     * @param ex      the thrown {@link EntityInUseException}.
-     * @param request the current web request.
-     * @return a {@link ResponseEntity} containing a {@code Problem} object and a {@code 409 Conflict} status.
+     * <p>Example: attempting to delete a parent that still has children.</p>
+     *
+     * @param ex      the domain exception indicating the entity is in use.
+     * @param request the current request context.
+     * @return a 409 Conflict response containing a {@link Problem} body.
      */
     @ExceptionHandler(EntityInUseException.class)
     public ResponseEntity<?> handlerEntityInUseException(EntityInUseException ex, WebRequest request) {
@@ -74,21 +79,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.CONFLICT;
         ProblemType problemType = ProblemType.ENTITY_IN_USE;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
-                .build();
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     /**
-     * Handles general business logic violations.
-     * <p>
-     * Example: trying to register a duplicate entry where uniqueness is required.
-     * </p>
+     * Handles business rule violations (validation beyond basic field-level validation,
+     * domain invariants, or cross-entity checks).
      *
-     * @param ex      the thrown {@link BusinessException}.
-     * @param request the current web request.
-     * @return a {@link ResponseEntity} containing a {@code Problem} object and a {@code 400 Bad Request} status.
+     * @param ex      the domain exception describing the business rule breach.
+     * @param request the current request context.
+     * @return a 400 Bad Request response containing a {@link Problem} body.
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> handleBusinessException(BusinessException ex, WebRequest request) {
@@ -96,30 +98,29 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.BUSINESS_LOGIC_ERROR;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
-                .build();
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
 
-        return handleExceptionInternal(ex,problem, new HttpHeaders(),status, request);
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     /**
-     * Overrides the default Spring MVC exception handling to always return
-     * a standardized {@code Problem} response body.
-     * <p>
-     * If the provided {@code body} is {@code null} or just a {@code String},
-     * this method wraps it into a {@code Problem} object with a timestamp and message.
-     * </p>
+     * Ensures a standardized {@link Problem} body for exceptions handled by Spring MVC.
+     *
+     * <p>If the {@code body} is {@code null} or a raw {@link String}, it is wrapped into
+     * a {@link Problem} with a {@code title} and {@code status}. Framework exceptions that
+     * already supply a structured body will pass through unchanged.</p>
      *
      * @param ex      the exception being handled.
-     * @param body    the body to be returned (can be {@code null}, a message, or a structured object).
-     * @param headers HTTP headers to include in the response.
-     * @param status  HTTP status code of the response.
-     * @param request the current web request.
-     * @return a {@link ResponseEntity} containing a {@code Problem} object and the given status.
+     * @param body    the response body (may be {@code null}, a {@link String}, or a structured object).
+     * @param headers response headers.
+     * @param status  HTTP status to return.
+     * @param request the current request context.
+     * @return a response entity carrying a {@link Problem} payload.
      */
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-                                                             HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
         if (body == null) {
             body = Problem.builder()
                     .title(status.getReasonPhrase())
@@ -136,18 +137,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Assembles a {@link Problem.ProblemBuilder} with the given params.
-     * @param status  {@link HttpStatus}
-     * @param problemType {@link ProblemType}
-     * @param detail The description of the problem, a message.
-     * @return {@link Problem.ProblemBuilder} to be used to create a {@link Problem}
+     * Helper for building a {@link Problem} aligned with RFC 7807 fields.
+     *
+     * @param status      the HTTP status to set ({@code Problem.status}).
+     * @param problemType the high-level problem classification (maps to {@code type} and {@code title}).
+     * @param detail      human-readable description of this particular occurrence.
+     * @return a {@link Problem.ProblemBuilder} primed with {@code status}, {@code type}, {@code title}, and {@code detail}.
      */
-    private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail){
-        return  Problem.builder()
+    private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
+        return Problem.builder()
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail);
     }
-
 }
