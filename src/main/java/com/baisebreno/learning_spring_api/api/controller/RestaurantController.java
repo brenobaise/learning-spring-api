@@ -74,24 +74,13 @@ public class RestaurantController {
      * @return It can return the updated model, a not found status code , or a bad request status code.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Restaurant restaurant){
-        try {
-           Restaurant foundRestaurant = restaurantRepository.findById(id)
-                    .orElse(null);
+    public Restaurant update(@PathVariable Long id, @RequestBody Restaurant restaurant){
+           Restaurant foundRestaurant = restaurantRegistryService.findOne(id);
 
-            if (foundRestaurant != null) {
-                BeanUtils.copyProperties(restaurant, foundRestaurant, "id","paymentType","address","registeredDate","products");
+           BeanUtils.copyProperties(restaurant, foundRestaurant, "id","paymentType","address","registeredDate","products");
 
-                foundRestaurant = restaurantRegistryService.save(foundRestaurant);
-                return ResponseEntity.ok(foundRestaurant);
-            }
+           return restaurantRegistryService.save(foundRestaurant);
 
-            return ResponseEntity.notFound().build();
-
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
     }
 
     /**
@@ -102,15 +91,10 @@ public class RestaurantController {
      * @return It may return the patched model or a not found status code.
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patch(@PathVariable Long id,
+    public Restaurant patch(@PathVariable Long id,
                                    @RequestBody Map<String, Object> fields){
 
-        Restaurant foundRestaurant = restaurantRepository.findById(id).orElse(null);
-
-        if(foundRestaurant == null){
-            return ResponseEntity.notFound().build();
-        }
-
+        Restaurant foundRestaurant = restaurantRegistryService.findOne(id);
 
         merge(fields, foundRestaurant);
 
@@ -144,5 +128,11 @@ public class RestaurantController {
 
 
         });
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        restaurantRegistryService.remove(id);
     }
 }

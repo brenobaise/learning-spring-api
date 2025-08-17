@@ -22,28 +22,38 @@ public class CityRegistryService {
     private CityRepository cityRepository;
 
     @Autowired
-    private GeographicalStateRepository stateRepository;
+    private GeographicalStateRegistryService stateService;
 
-    public City save(City city){
+    public static final String MESSAGE_CITY_NOT_FOUND = "City of id %d not found.";
+    public static final String MESSAGE_CITY_IN_USE = "City of id %d cannot be removed, it's being used.";
+
+
+    public City findOne(Long id) {
+        return cityRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format(MESSAGE_CITY_NOT_FOUND, id))
+        );
+
+    }
+
+    public City save(City city) {
         Long stateId = city.getState().getId();
-        GeographicalState state = stateRepository.findById(stateId)
-                .orElseThrow( () -> new EntityNotFoundException(
-                String.format("State with id %d not found",stateId)));
+
+        GeographicalState state = stateService.findOne(stateId);
 
         city.setState(state);
 
         return cityRepository.save(city);
     }
 
-    public void remove(Long cityId){
-        try{
+    public void remove(Long cityId) {
+        try {
             cityRepository.deleteById(cityId);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException(
-                    String.format("City with code %d , not found", cityId));
-        }catch (DataIntegrityViolationException e){
+                    String.format(MESSAGE_CITY_NOT_FOUND, cityId));
+        } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(
-                    String.format("City with code %d , in use, it cannot be deleted", cityId));
+                    String.format(MESSAGE_CITY_IN_USE, cityId));
         }
     }
 

@@ -16,8 +16,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class KitchenRegistryService {
 
+    public static final String MESSAGE_KITCHEN_NOT_FOUND = "Kitchen of id %d not found.";
+    public static final String MESSAGE_KITCHEN_IN_USE = "Kitchen of id %d cannot be removed, it's being used.";
+
+
     @Autowired
     private KitchenRepository kitchenRepository;
+
+    /**
+     * Finds a Kitchen record by id. Throws an EntityNotFoundException if it fails.
+     * @param id the id of the given record.
+     * @return A Kitchen object or an EntityNotFoundException
+     */
+    public Kitchen findOne(Long id){
+        return kitchenRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format(MESSAGE_KITCHEN_NOT_FOUND, id))
+        );
+    }
 
     public Kitchen save(Kitchen kitchen){
        return kitchenRepository.save(kitchen);
@@ -28,11 +43,11 @@ public class KitchenRegistryService {
             kitchenRepository.deleteById(id);
         }catch (EmptyResultDataAccessException e){
             throw new EntityNotFoundException(
-                    String.format("Kitchen of id %d not found.", id)
+                    String.format(MESSAGE_KITCHEN_NOT_FOUND, id)
             );
         }catch (DataIntegrityViolationException e){
             throw new EntityInUseException(
-                    String.format("Kitchen of id %d cannot be removed, it's being used.", id)
+                    String.format(MESSAGE_KITCHEN_IN_USE, id)
             );
         }
 

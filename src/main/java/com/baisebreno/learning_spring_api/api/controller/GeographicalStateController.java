@@ -37,14 +37,8 @@ public class GeographicalStateController {
      * @return {@code 200  | 404} status code.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<GeographicalState> find(@PathVariable Long id){
-        Optional<GeographicalState> foundState = stateRepository.findById(id);
-
-        if(foundState.isPresent()){
-            return ResponseEntity.ok(foundState.get());
-        }
-
-        return ResponseEntity.notFound().build();
+    public GeographicalState find(@PathVariable Long id){
+        return  stateRegistryService.findOne(id);
     }
 
     /**
@@ -66,15 +60,13 @@ public class GeographicalStateController {
      * @return {@code 200 | 404}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<GeographicalState> update(@PathVariable Long id, @RequestBody GeographicalState state){
-        GeographicalState foundState = stateRepository.findById(id).orElse(null);
+    public GeographicalState update(@PathVariable Long id, @RequestBody GeographicalState state){
+        GeographicalState foundState = stateRegistryService.findOne(id);
 
-        if(foundState != null){
             BeanUtils.copyProperties(state, foundState, "id");
             foundState = stateRegistryService.save(foundState);
-            return ResponseEntity.ok(foundState);
-        }
-        return ResponseEntity.notFound().build();
+
+        return foundState;
     }
 
     /**

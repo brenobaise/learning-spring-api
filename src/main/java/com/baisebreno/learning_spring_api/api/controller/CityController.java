@@ -22,43 +22,42 @@ public class CityController {
     @Autowired
     private CityRegistryService cityRegistryService;
 
+
     /**
      * Returns all {@link City} records from the database.
+     *
      * @return a List of {@link City} entities.
      */
     @GetMapping
-    public ResponseEntity<List<City>> getAll(){
+    public ResponseEntity<List<City>> getAll() {
         return ResponseEntity.ok(cityRepository.findAll());
     }
 
     /**
      * Searches for an entity with a given id.
+     *
      * @param id the id of the target entity.
      * @return {@code 200 | 404}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<City> find(@PathVariable Long id){
-        City city = cityRepository.findById(id).orElse(null);
-
-        if(city != null){
-            return ResponseEntity.ok(city);
-        }
-        return ResponseEntity.notFound().build();
+    public City find(@PathVariable Long id) {
+        return cityRegistryService.findOne(id);
     }
 
     /**
      * Persists a new {@link City} entity into the database.
+     *
      * @param city the representational model carrying the new entity.
      * @return {@code 201 | 404}
      */
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<?> create(@RequestBody City city){
-        try{
+    public ResponseEntity<?> create(@RequestBody City city) {
+        try {
             cityRegistryService.save(city);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(city);
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         }
@@ -66,41 +65,31 @@ public class CityController {
 
     /**
      * Updates a {@link City} entity by a given id.
-     * @param id the id of the target entity.
+     *
+     * @param id   the id of the target entity.
      * @param city the representational model carrying the new fields.
-     * @return  {@code 200 | 404}
+     * @return {@code 200 | 404}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<City> update(@PathVariable Long id, @RequestBody City city){
-        City foundCity = cityRepository.findById(id).orElse(null);
+    public City update(@PathVariable Long id, @RequestBody City city) {
+        City foundCity = cityRegistryService.findOne(id);
 
-        if(foundCity != null){
-            BeanUtils.copyProperties(city, foundCity, "id");
-            foundCity = cityRegistryService.save(foundCity);
-            return ResponseEntity.ok(foundCity);
-        }
-
-        return ResponseEntity.notFound().build();
-
+        BeanUtils.copyProperties(city, foundCity, "id");
+        foundCity = cityRegistryService.save(foundCity);
+        return foundCity;
     }
+
 
     /**
      * Deletes an entity from the database by a given id.
+     *
      * @param id the id of the target entity.
      * @return {@code 204 | 404 | 409} status code.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id){
-        try{
-            cityRegistryService.remove(id);
-            return ResponseEntity.noContent().build();
-
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }catch (EntityInUseException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove(@PathVariable Long id) {
+        cityRegistryService.remove(id);
     }
 
 }

@@ -1,11 +1,15 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
+import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,13 +24,26 @@ public class RestaurantRegistryService {
     @Autowired
     KitchenRepository kitchenRepository;
 
+    @Autowired
+    KitchenRegistryService kitchenRegistryService;
+
+
+    public static final String MESSAGE_RESTAURANT_NOT_FOUND = "Restaurant of id %d not found.";
+    public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
+
+
+    public Restaurant findOne(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format(MESSAGE_RESTAURANT_NOT_FOUND, id))
+        );
+
+    }
+
     public Restaurant save(Restaurant restaurant) {
+
         Long kitchenId = restaurant.getKitchen().getId();
-        Kitchen kitchen = kitchenRepository.findById(kitchenId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Não existe cadastro de cozinha com código %d", kitchenId)));
 
-
+        Kitchen kitchen = kitchenRegistryService.findOne(kitchenId);
 
         restaurant.setKitchen(kitchen);
 
@@ -34,11 +51,16 @@ public class RestaurantRegistryService {
     }
 
 
+
+    public void remove(Long id) {
+        try {
+            restaurantRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException(
+                    String.format(MESSAGE_RESTAURANT_NOT_FOUND, id));
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityInUseException(
+                    String.format(MESSAGE_RESTAURANT_IN_USE, id));
+        }
+    }
 }
-
-/*
-
-if all ok -> return 200, return changes
-if no kitchen id -> return 400, EntityNotFound, body = e.getMessage
-if no restaurant id -> return 404, EntityNotFound, 
- */

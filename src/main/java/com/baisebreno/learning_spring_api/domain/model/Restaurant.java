@@ -29,7 +29,7 @@ public class Restaurant {
     @Column(name = "delivery_fee")
     private BigDecimal deliveryRate;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne() // fetch = FetchType.LAZY only fetches when needed
 //    @JsonIgnoreProperties("hibernateLazyInitializer")
     @JoinColumn(name = "kitchen_id", nullable = false)

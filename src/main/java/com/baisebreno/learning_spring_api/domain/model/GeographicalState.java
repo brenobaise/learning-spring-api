@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@Table(name = "state")
 public class GeographicalState {
 
     @EqualsAndHashCode.Include
