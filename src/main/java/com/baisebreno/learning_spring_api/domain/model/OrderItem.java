@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+/**
+ * Represents an Item inside an Order entity
+ */
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

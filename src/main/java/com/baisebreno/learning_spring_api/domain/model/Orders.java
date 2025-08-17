@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents an Order entity inside the database.
+ */
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
