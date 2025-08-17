@@ -25,7 +25,6 @@ public class CityRegistryService {
     @Autowired
     private GeographicalStateRegistryService stateService;
 
-    public static final String MESSAGE_CITY_IN_USE = "City of id %d cannot be removed, it's being used.";
 
     public City save(City city) {
         Long stateId = city.getState().getId();
@@ -40,12 +39,12 @@ public class CityRegistryService {
     public void remove(Long cityId) {
         try {
             cityRepository.deleteById(cityId);
+
         } catch (EmptyResultDataAccessException e) {
             throw new CityNotFoundException(cityId);
 
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(
-                    String.format(MESSAGE_CITY_IN_USE, cityId));
+            throw new EntityInUseException(cityId);
         }
     }
 

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
 public class City {
     @EqualsAndHashCode.Include
@@ -16,7 +17,7 @@ public class City {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
+    @ManyToOne()
+    @JoinColumn( nullable = false)
     private GeographicalState state;
 }

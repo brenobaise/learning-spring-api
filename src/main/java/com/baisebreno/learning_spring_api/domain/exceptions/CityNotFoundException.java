@@ -6,6 +6,6 @@ public class CityNotFoundException extends EntityNotFoundException {
     }
 
     public CityNotFoundException(Long cityId){
-        this(String.format( "City of id %d not found.", cityId));
+        this(String.format( "City with id %d, not found.", cityId));
     }
 }
