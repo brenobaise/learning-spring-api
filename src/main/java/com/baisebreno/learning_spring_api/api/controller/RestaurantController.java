@@ -1,6 +1,9 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
+import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
+import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
@@ -41,13 +44,8 @@ public class RestaurantController {
      * @return {@code 200 | 404} status code
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> find(@PathVariable Long id){
-        Optional<Restaurant> foundRestaurant = restaurantRepository.findById(id);
-
-        if(foundRestaurant.isPresent()){
-            return ResponseEntity.ok(foundRestaurant.get());
-        }
-        return ResponseEntity.notFound().build();
+    public Restaurant find(@PathVariable Long id){
+        return restaurantRegistryService.findOne(id);
     }
 
     /**
@@ -56,14 +54,11 @@ public class RestaurantController {
      * @return It may return the added resource, or a bad request status code.
      */
     @PostMapping()
-    public ResponseEntity<?> add(@RequestBody Restaurant restaurant){
+    public Restaurant add(@RequestBody Restaurant restaurant){
         try{
-            restaurant = restaurantRegistryService.save(restaurant);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(restaurant);
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return restaurantRegistryService.save(restaurant);
+        }catch (RestaurantNotFoundException e){
+            throw new BusinessException(e.getMessage());
         }
     }
 
@@ -79,7 +74,11 @@ public class RestaurantController {
 
            BeanUtils.copyProperties(restaurant, foundRestaurant, "id","paymentType","address","registeredDate","products");
 
-           return restaurantRegistryService.save(foundRestaurant);
+           try {
+               return restaurantRegistryService.save(foundRestaurant);
+           }catch (KitchenNotFoundException e){
+               throw new BusinessException(e.getMessage());
+           }
 
     }
 

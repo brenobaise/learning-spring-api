@@ -1,8 +1,7 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.City;
+import com.baisebreno.learning_spring_api.domain.exceptions.GeographicalStateNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.GeographicalState;
 import com.baisebreno.learning_spring_api.domain.repository.GeographicalStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,13 @@ public class GeographicalStateRegistryService {
     @Autowired
     private GeographicalStateRepository stateRepository;
 
-    public static final String MESSAGE_STATE_NOT_FOUND = "State of id %d not found.";
-    public static final String MESSAGE_CITY_IN_USE = "State of id %d cannot be removed, it's being used.";
+    public static final String MESSAGE_STATE_IN_USE = "State of id %d cannot be removed, it's being used.";
 
 
-    public GeographicalState findOne(Long id){
-        return stateRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format(MESSAGE_STATE_NOT_FOUND, id))
+    public GeographicalState findOne(Long stateId){
+        return stateRepository.findById(stateId).orElseThrow(
+                () -> new GeographicalStateNotFoundException(stateId)
         );
-
     }
 
     public GeographicalState save(GeographicalState state) {
@@ -40,15 +37,11 @@ public class GeographicalStateRegistryService {
             stateRepository.deleteById(stateId);
 
         }catch (EmptyResultDataAccessException e){
+            throw new GeographicalStateNotFoundException(stateId);
 
-            throw new EntityNotFoundException(
-
-                    String.format(MESSAGE_STATE_NOT_FOUND,stateId));
         }catch (DataIntegrityViolationException e){
-
             throw new EntityInUseException(
-
-                    String.format(MESSAGE_CITY_IN_USE,stateId));
+                    String.format(MESSAGE_STATE_IN_USE,stateId));
         }
     }
 

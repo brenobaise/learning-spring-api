@@ -1,7 +1,9 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
+import com.baisebreno.learning_spring_api.api.exceptionhandler.Problem;
+import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.baisebreno.learning_spring_api.domain.exceptions.GeographicalStateNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.repository.CityRepository;
 import com.baisebreno.learning_spring_api.domain.service.CityRegistryService;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -52,14 +55,11 @@ public class CityController {
      */
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<?> create(@RequestBody City city) {
+    public City create(@RequestBody City city) {
         try {
-            cityRegistryService.save(city);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(city);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
+            return cityRegistryService.save(city);
+        } catch (GeographicalStateNotFoundException e){
+            throw new BusinessException(e.getMessage(),e);
         }
     }
 
@@ -72,11 +72,15 @@ public class CityController {
      */
     @PutMapping("/{id}")
     public City update(@PathVariable Long id, @RequestBody City city) {
-        City foundCity = cityRegistryService.findOne(id);
+        try{
+            City foundCity = cityRegistryService.findOne(id);
 
-        BeanUtils.copyProperties(city, foundCity, "id");
-        foundCity = cityRegistryService.save(foundCity);
-        return foundCity;
+            BeanUtils.copyProperties(city, foundCity, "id");
+
+            return  cityRegistryService.save(foundCity);
+        }catch (GeographicalStateNotFoundException e){
+            throw new BusinessException(e.getMessage(),e);
+        }
     }
 
 

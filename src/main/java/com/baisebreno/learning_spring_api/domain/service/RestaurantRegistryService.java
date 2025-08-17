@@ -2,6 +2,7 @@ package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
@@ -27,17 +28,9 @@ public class RestaurantRegistryService {
     @Autowired
     KitchenRegistryService kitchenRegistryService;
 
-
-    public static final String MESSAGE_RESTAURANT_NOT_FOUND = "Restaurant of id %d not found.";
     public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
 
 
-    public Restaurant findOne(Long id) {
-        return restaurantRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format(MESSAGE_RESTAURANT_NOT_FOUND, id))
-        );
-
-    }
 
     public Restaurant save(Restaurant restaurant) {
 
@@ -47,20 +40,27 @@ public class RestaurantRegistryService {
 
         restaurant.setKitchen(kitchen);
 
+
         return restaurantRepository.save(restaurant);
     }
 
 
 
-    public void remove(Long id) {
+    public void remove(Long restaurantId) {
         try {
-            restaurantRepository.deleteById(id);
+            restaurantRepository.deleteById(restaurantId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(
-                    String.format(MESSAGE_RESTAURANT_NOT_FOUND, id));
+            throw new RestaurantNotFoundException( restaurantId);
+
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(
-                    String.format(MESSAGE_RESTAURANT_IN_USE, id));
+                    String.format(MESSAGE_RESTAURANT_IN_USE, restaurantId));
         }
+    }
+
+    public Restaurant findOne(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new RestaurantNotFoundException(restaurantId)
+        );
     }
 }

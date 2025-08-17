@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
+import com.baisebreno.learning_spring_api.domain.exceptions.CityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.City;
@@ -24,16 +25,7 @@ public class CityRegistryService {
     @Autowired
     private GeographicalStateRegistryService stateService;
 
-    public static final String MESSAGE_CITY_NOT_FOUND = "City of id %d not found.";
     public static final String MESSAGE_CITY_IN_USE = "City of id %d cannot be removed, it's being used.";
-
-
-    public City findOne(Long id) {
-        return cityRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format(MESSAGE_CITY_NOT_FOUND, id))
-        );
-
-    }
 
     public City save(City city) {
         Long stateId = city.getState().getId();
@@ -49,12 +41,17 @@ public class CityRegistryService {
         try {
             cityRepository.deleteById(cityId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException(
-                    String.format(MESSAGE_CITY_NOT_FOUND, cityId));
+            throw new CityNotFoundException(cityId);
+
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(
                     String.format(MESSAGE_CITY_IN_USE, cityId));
         }
+    }
+
+    public City findOne(Long cityId) {
+        return cityRepository.findById(cityId).orElseThrow(
+                () -> new CityNotFoundException( cityId));
     }
 
 

@@ -75,17 +75,8 @@ public class GeographicalStateController {
      * @return {@code  204 | 404 | 409}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id){
-        try{
-            stateRegistryService.remove(id);
-            return ResponseEntity.noContent().build();
-
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-
-        }catch (EntityInUseException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove(@PathVariable Long id) {
+        stateRegistryService.remove(id);
     }
  }

@@ -1,18 +1,14 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
-import com.baisebreno.learning_spring_api.api.model.KitchenXmlModel;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.service.KitchenRegistryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/kitchens")
@@ -30,11 +26,6 @@ public class KitchenController {
     @GetMapping()
     public List<Kitchen> getAll() {
         return kitchenRepository.findAll();
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<KitchenXmlModel> getAllXmlFormatted() {
-        return ResponseEntity.ok(new KitchenXmlModel(kitchenRepository.findAll()));
     }
 
 
