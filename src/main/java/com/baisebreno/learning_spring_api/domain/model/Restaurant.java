@@ -41,7 +41,7 @@ public class Restaurant {
     @NotNull
     @Column(name = "delivery_fee")
     @DeliveryFee
-    @Multiple(number = 5)
+//    @Multiple(number = 5)
     private BigDecimal deliveryRate;
 
     @ConvertGroup(from = Default.class, to = Groups.KitchenId.class)

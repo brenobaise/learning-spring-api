@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
+/*
  * The purpose of this class is for learning only, it shows how to do conditional validation through annotation.
  * As example, the request is only 200, when the descriptionField is equal to the mandatoryField and the fieldValue is equal to hardcoded 0.
  *

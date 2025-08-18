@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +28,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -457,7 +457,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ProblemType problemType = ProblemType.INVALID_PARAMETER;
-        String detail = String.format("One or more fields are invalid.");
+        String detail = "One or more fields are invalid.";
 
         BindingResult bindingResult = ex.getBindingResult();
 
@@ -468,19 +468,30 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             We then map each field error with a Problem.Field Builder populating Field.name and Field.message,
             then we reduce to a list which is our original goal.
          */
-        List<Problem.Field> problemFields = bindingResult.getFieldErrors().stream()
-                .map(fieldError -> {
-                    String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+        List<Problem.Object> problemObjects = bindingResult.getAllErrors().stream()
+                .map(objectError -> {
+                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
-                   return  Problem.Field.builder()
-                            .name(fieldError.getField()) // name of the property which is not valid
+                    String name = objectError.getObjectName();
+
+                    if(objectError instanceof FieldError){
+                        name = ((FieldError)  objectError).getField();
+                    }
+
+
+
+
+                   return  Problem.Object.builder()
+                            .name(name) // name of the property which is not valid
                             .userMessage(message)
                             .build();
+
+
                 })
                 .collect(Collectors.toList());
 
         Problem problem = createProblemBuilder(status, problemType,detail, detail,LocalDateTime.now())
-                .fields(problemFields)
+                .objects(problemObjects)
                 .build();
 
         return handleExceptionInternal(ex, problem,headers,status,request);
