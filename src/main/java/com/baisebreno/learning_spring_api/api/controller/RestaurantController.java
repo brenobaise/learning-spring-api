@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
+import com.baisebreno.learning_spring_api.core.validation.ValidationException;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +35,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantRegistryService restaurantRegistryService;
+
+    @Autowired
+    private SmartValidator smartValidator;
 
     /**
      * This handler returns all {@link Restaurant} records in the database.
@@ -103,8 +109,18 @@ public class RestaurantController {
         Restaurant foundRestaurant = restaurantRegistryService.findOne(id);
 
         merge(fields, foundRestaurant, request);
+        validate(foundRestaurant, "restaurant");
 
         return update(id, foundRestaurant);
+    }
+
+    private void validate(Restaurant restaurant, String objectName) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restaurant, objectName);
+        smartValidator.validate(restaurant, bindingResult);
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(bindingResult);
+
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.api.exceptionhandler;
 
+import com.baisebreno.learning_spring_api.core.validation.ValidationException;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
@@ -63,6 +64,7 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "There was an internal server error, try again or let the system admin know.";
+    public static final String MULTIPLE_INVALID_FIELDS_MESSAGE = "One or more fields are invalid. Correct the errors, and try again.";
 
     @Autowired
     private MessageSource messageSource;
@@ -455,45 +457,46 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
+                                                                  HttpStatus status, WebRequest request) {
+        return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
+    }
+
+    private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers,
+                                                            HttpStatus status, WebRequest request) {
+
         ProblemType problemType = ProblemType.INVALID_PARAMETER;
-        String detail = "One or more fields are invalid.";
+        String detail = MULTIPLE_INVALID_FIELDS_MESSAGE;
 
-        BindingResult bindingResult = ex.getBindingResult();
 
-        /*
-            A Problem has a property of List<Problem.Field>.
-            We get a list of bindingResults, containing the invalid fields.
-
-            We then map each field error with a Problem.Field Builder populating Field.name and Field.message,
-            then we reduce to a list which is our original goal.
-         */
         List<Problem.Object> problemObjects = bindingResult.getAllErrors().stream()
                 .map(objectError -> {
                     String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
                     String name = objectError.getObjectName();
 
-                    if(objectError instanceof FieldError){
-                        name = ((FieldError)  objectError).getField();
+                    if (objectError instanceof FieldError) {
+                        name = ((FieldError) objectError).getField();
                     }
 
-
-
-
-                   return  Problem.Object.builder()
-                            .name(name) // name of the property which is not valid
+                    return Problem.Object.builder()
+                            .name(name)
                             .userMessage(message)
                             .build();
-
-
                 })
                 .collect(Collectors.toList());
 
-        Problem problem = createProblemBuilder(status, problemType,detail, detail,LocalDateTime.now())
+        Problem problem = createProblemBuilder(status, problemType, detail, detail, LocalDateTime.now())
                 .objects(problemObjects)
                 .build();
 
-        return handleExceptionInternal(ex, problem,headers,status,request);
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+
+    @ExceptionHandler({ ValidationException.class })
+    public ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
+        return handleValidationInternal(ex, ex.getBindingResult(), new HttpHeaders(),
+                HttpStatus.BAD_REQUEST, request);
     }
 }
