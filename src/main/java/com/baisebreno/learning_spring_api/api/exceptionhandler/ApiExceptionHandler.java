@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -456,25 +457,86 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex,problem, new HttpHeaders(), status, request);
     }
 
+    /**
+     * Handles {@link MethodArgumentNotValidException}, which occurs when an incoming
+     * request body annotated with {@code @Valid} fails Bean Validation.
+     *
+     * <p>This method delegates to {@link #handleValidationInternal(Exception, BindingResult, HttpHeaders, HttpStatus, WebRequest)}
+     * to build a structured {@link Problem} response containing details of all invalid fields.</p>
+     *
+     * <h2>Example scenario</h2>
+     * <pre>
+     * POST /users
+     * {
+     *   "name": "",      // @NotBlank violation
+     *   "age": 10        // @Min(18) violation
+     * }
+     *
+     * Response:
+     * {
+     *   "type": "https://algafood.co.uk/invalid-parameter",
+     *   "title": "Invalid Parameter",
+     *   "status": 400,
+     *   "detail": "One or more fields are invalid.",
+     *   "objects": [
+     *     { "name": "name", "userMessage": "must not be blank" },
+     *     { "name": "age", "userMessage": "must be greater than or equal to 18" }
+     *   ]
+     * }
+     * </pre>
+     *
+     * @param ex       the validation exception containing field errors
+     * @param headers  the HTTP headers
+     * @param status   the HTTP status code (typically 400 Bad Request)
+     * @param request  the current web request
+     * @return a {@link ResponseEntity} with a {@link Problem} body describing validation errors
+     */
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
-                                                                  HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
     }
 
-    private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers,
-                                                            HttpStatus status, WebRequest request) {
+    /**
+     * Centralized handler for translating Bean Validation errors into
+     * a structured {@link Problem} response.
+     *
+     * <p>This method extracts all {@link ObjectError} and {@link FieldError} instances
+     * from the {@link BindingResult}, resolves their localized error messages via
+     * Spring's {@link org.springframework.context.MessageSource}, and maps them into
+     * a list of {@link Problem.Object} entries.</p>
+     *
+     * <p>Both field-level and object-level (class-level) validation errors are supported.
+     * Field errors are reported with the field name, while global errors fall back to the
+     * object name.</p>
+     *
+     * @param ex            the exception that triggered validation handling
+     * @param bindingResult the binding result containing validation errors
+     * @param headers       the HTTP headers
+     * @param status        the HTTP status to return
+     * @param request       the current web request
+     * @return a {@link ResponseEntity} containing a {@link Problem} object with details
+     *         of all validation failures
+     */
+    private ResponseEntity<Object> handleValidationInternal(
+            Exception ex,
+            BindingResult bindingResult,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
 
         ProblemType problemType = ProblemType.INVALID_PARAMETER;
         String detail = MULTIPLE_INVALID_FIELDS_MESSAGE;
 
-
         List<Problem.Object> problemObjects = bindingResult.getAllErrors().stream()
                 .map(objectError -> {
+                    // Use i18n message source to resolve default messages
                     String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
                     String name = objectError.getObjectName();
-
                     if (objectError instanceof FieldError) {
                         name = ((FieldError) objectError).getField();
                     }
@@ -493,10 +555,33 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
-
+    /**
+     * Handles custom {@link ValidationException} thrown explicitly within
+     * the application (outside of the default Spring MVC validation flow).
+     *
+     * <p>This allows domain or service-layer validation errors to be reported
+     * consistently with request body validation errors.</p>
+     *
+     * <p>For example, if a business rule check is wrapped in a custom
+     * {@link ValidationException}, this handler will produce the same RFC-7807
+     * problem response as {@link #handleMethodArgumentNotValid}.</p>
+     *
+     * @param ex      the custom validation exception containing a {@link BindingResult}
+     * @param request the current web request
+     * @return a {@link ResponseEntity} containing a {@link Problem} body with
+     *         validation error details
+     */
     @ExceptionHandler({ ValidationException.class })
-    public ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
-        return handleValidationInternal(ex, ex.getBindingResult(), new HttpHeaders(),
-                HttpStatus.BAD_REQUEST, request);
+    public ResponseEntity<Object> handleValidationException(
+            ValidationException ex,
+            WebRequest request) {
+
+        return handleValidationInternal(
+                ex,
+                ex.getBindingResult(),
+                new HttpHeaders(),
+                HttpStatus.BAD_REQUEST,
+                request);
     }
+
 }
