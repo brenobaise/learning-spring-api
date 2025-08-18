@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -81,8 +82,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
         String detail = ex.getMessage();
 
-        Problem problem = createProblemBuilder(status,problemType,detail)
-                .userMessage(ex.getMessage())
+        Problem problem = createProblemBuilder(status, problemType ,detail, "The resource was not found, double check the URL.", LocalDateTime.now() )
                 .build();
 
         return handleExceptionInternal(ex,problem,new HttpHeaders(), status, request);
@@ -105,7 +105,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.CONFLICT;
         ProblemType problemType = ProblemType.ENTITY_IN_USE;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage(),ex.getMessage(), LocalDateTime.now())
                 .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
                 .build();
 
@@ -126,7 +126,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.BUSINESS_LOGIC_ERROR;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage(),ex.getMessage(), LocalDateTime.now())
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -153,11 +154,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             body = Problem.builder()
                     .title(status.getReasonPhrase())
                     .status(status.value())
+                    .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+                    .timestamp(LocalDateTime.now())
                     .build();
         } else if (body instanceof String) {
             body = Problem.builder()
                     .title((String) body)
                     .status(status.value())
+                    .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+                    .timestamp(LocalDateTime.now())
                     .build();
         }
 
@@ -200,7 +205,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
         String detail = "The request body is invalid. Please check the JSON syntax.";
 
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        Problem problem = createProblemBuilder(status, problemType, detail, ex.getMessage(), LocalDateTime.now())
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -260,8 +266,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         // creates the problem builder
-        Problem problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+        Problem problem = createProblemBuilder(status, problemType, detail,INTERNAL_SERVER_ERROR_MESSAGE, LocalDateTime.now())
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
@@ -301,8 +306,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getTargetType().getSimpleName()
         );
 
-        Problem problem = createProblemBuilder(status, problemType, detail)
-                .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+        Problem problem = createProblemBuilder(status, problemType, detail, INTERNAL_SERVER_ERROR_MESSAGE, LocalDateTime.now())
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
@@ -314,15 +318,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      *
      * @param status      the HTTP status to set ({@code Problem.status}).
      * @param problemType the high-level problem classification (maps to {@code type} and {@code title}).
-     * @param detail      human-readable description of this particular occurrence.
+     * @param detail      human-readable description of this particular occurrence, to the api consumer.
+     * @param userMessage human-readable description of this particular occurrence, to the user.
+     * @param timestamp   time of occurrence.
      * @return a {@link Problem.ProblemBuilder} primed with {@code status}, {@code type}, {@code title}, and {@code detail}.
      */
     private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType,
-                                                        String detail) {
+                                                        String detail, String userMessage, LocalDateTime timestamp) {
         return Problem.builder()
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
+                .userMessage(userMessage)
+                .timestamp(timestamp)
                 .detail(detail);
     }
 
@@ -377,7 +385,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()
         );
 
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        Problem problem = createProblemBuilder(status, problemType, detail,ex.getMessage(), LocalDateTime.now())
+                .build();
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
@@ -401,7 +410,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
 
         String detail = String.format("The resource %s you tried to access, does not exist.", ex.getRequestURL());
-        Problem problem = createProblemBuilder(status,problemType,detail).build();
+        Problem problem = createProblemBuilder(status,problemType,detail,ex.getMessage(), LocalDateTime.now())
+                .build();
 
         return handleExceptionInternal(ex,problem,headers,status,request);
     }
@@ -428,7 +438,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Printing the stack trace needs to be removed for production, we use it until logging replaces this.
          */
         ex.printStackTrace();
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        Problem problem = createProblemBuilder(status, problemType, detail, ex.getMessage(), LocalDateTime.now())
+                .build();
 
         return handleExceptionInternal(ex,problem, new HttpHeaders(), status, request);
     }
