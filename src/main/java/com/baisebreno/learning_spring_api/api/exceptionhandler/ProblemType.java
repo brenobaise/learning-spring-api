@@ -8,7 +8,8 @@ public enum ProblemType {
     MESSAGE_NOT_READABLE("/message-not-readable", "Message Not Readable"),
     ENTITY_NOT_FOUND("/entity-not-found", "Entity Not Found"),
     ENTITY_IN_USE("/entity-in-use", "Entity In Use, cannot be deleted"),
-    BUSINESS_LOGIC_ERROR("/business-logic-error", "Business Logic Violation");
+    BUSINESS_LOGIC_ERROR("/business-logic-error", "Business Logic Violation"),
+    INVALID_PARAMETER("/invalid-parameter", "Invalid Parameter");
     private static final String BASE_URL = "https://algafood.co.uk";
 
 

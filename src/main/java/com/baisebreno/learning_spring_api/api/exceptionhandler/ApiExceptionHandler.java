@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -61,7 +63,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a 404 Not Found response containing a {@link Problem} body.
      */
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleGeographicalStateNotFoundException(
+    public ResponseEntity<?> handleGeographicalStateNotFound(
             EntityNotFoundException ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
@@ -83,7 +85,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a 409 Conflict response containing a {@link Problem} body.
      */
     @ExceptionHandler(EntityInUseException.class)
-    public ResponseEntity<?> handlerEntityInUseException(EntityInUseException ex, WebRequest request) {
+    public ResponseEntity<?> handleEntityInUse(EntityInUseException ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.CONFLICT;
         ProblemType problemType = ProblemType.ENTITY_IN_USE;
@@ -153,7 +155,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      *
      * <ul>
      *   <li>If the root cause is an {@link com.fasterxml.jackson.databind.exc.InvalidFormatException},
-     *       it delegates to {@link #handleInvalidFormatException(InvalidFormatException, HttpHeaders, HttpStatus, WebRequest)}
+     *       it delegates to {@link #handleInvalidFormat(InvalidFormatException, HttpHeaders, HttpStatus, WebRequest)}
      *       to provide detailed feedback about the property and invalid value.</li>
      *   <li>Otherwise, it responds with a generic "message not readable" problem.</li>
      * </ul>
@@ -172,9 +174,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         // Specific case: JSON field has wrong type (e.g. string instead of number).
         if (rootCause instanceof InvalidFormatException) {
-            return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
+            return handleInvalidFormat((InvalidFormatException) rootCause, headers, status, request);
         } else if (rootCause instanceof PropertyBindingException) {
-            return handlePropertyBindingException((PropertyBindingException) rootCause, headers,status,request);
+            return handlePropertyBinding((PropertyBindingException) rootCause, headers, status, request);
         }
 
         // Generic unreadable body case (malformed JSON, missing braces, etc.)
@@ -185,7 +187,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
-
 
 
     /**
@@ -208,11 +209,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request the current web request context.
      * @return a {@link ResponseEntity} with a {@link Problem} body describing the error.
      */
-    private ResponseEntity<Object> handlePropertyBindingException(
-            PropertyBindingException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
+    private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex, HttpHeaders headers,
+                                                         HttpStatus status, WebRequest request) {
 
         // Build a dotted path like "address.street"
         String path = ex.getPath().stream()
@@ -230,7 +228,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     ex.getPropertyName(), path.isEmpty() ? ex.getPropertyName() : path
             );
 
-        // if the property does not exist.
+            // if the property does not exist.
         } else if (ex instanceof UnrecognizedPropertyException) {
             detail = String.format(
                     "The property '%s' (path: '%s') does not exist. Check for typos or remove it.",
@@ -264,8 +262,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request the current web request context.
      * @return a {@link ResponseEntity} containing a {@link Problem} describing the invalid format error.
      */
-    private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers,
-                                                                HttpStatus status, WebRequest request) {
+    private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex, HttpHeaders headers,
+                                                       HttpStatus status, WebRequest request) {
 
         // Build a JSON path like "address.streetNumber"
         String path = ex.getPath().stream()
@@ -305,4 +303,60 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .title(problemType.getTitle())
                 .detail(detail);
     }
+
+    /**
+     * Handles {@link TypeMismatchException} thrown when a request parameter, path variable,
+     * or other input value cannot be converted to the expected type.
+     * <p>
+     * If the exception is an instance of {@link MethodArgumentTypeMismatchException},
+     * this method delegates handling to {@link #handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException, HttpHeaders, HttpStatus, WebRequest)}
+     * for more specific error reporting.
+     * Otherwise, it falls back to the default {@link ResponseEntityExceptionHandler#handleTypeMismatch(TypeMismatchException, HttpHeaders, HttpStatus, WebRequest)}.
+     *
+     * @param ex       the exception to handle (may be {@link MethodArgumentTypeMismatchException} or a general {@link TypeMismatchException})
+     * @param headers  the HTTP headers for the response
+     * @param status   the HTTP status to return
+     * @param request  the current web request
+     * @return a {@link ResponseEntity} containing a structured error response
+     */
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        // if it's of this type, call the handler
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatch(
+                    (MethodArgumentTypeMismatchException) ex, headers, status, request);
+        }
+
+        return super.handleTypeMismatch(ex, headers, status, request);
+    }
+
+    /**
+     * Handles {@link MethodArgumentTypeMismatchException}, which occurs when a controller method
+     * receives a request parameter or path variable that cannot be converted to the expected type.
+     * <p>
+     * This method creates a problem detail response indicating which parameter was invalid,
+     * the invalid value provided, and the expected type.
+     *
+     * @param ex      the exception containing details about the type mismatch
+     * @param headers the HTTP headers for the response
+     * @param status  the HTTP status to return
+     * @param request the current web request
+     * @return a {@link ResponseEntity} containing a {@link Problem} object with detailed error information
+     */
+    private ResponseEntity<Object> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ProblemType problemType = ProblemType.INVALID_PARAMETER;
+
+        String detail = String.format(
+                "The URL parameter '%s' received the value '%s', which is an invalid type. Type: %s",
+                ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()
+        );
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
 }

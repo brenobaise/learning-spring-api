@@ -7,14 +7,19 @@ import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundEx
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -91,11 +96,13 @@ public class RestaurantController {
      */
     @PatchMapping("/{id}")
     public Restaurant patch(@PathVariable Long id,
-                                   @RequestBody Map<String, Object> fields){
+                            @RequestBody Map<String, Object> fields,
+                            HttpServletRequest request
+                            ){
 
         Restaurant foundRestaurant = restaurantRegistryService.findOne(id);
 
-        merge(fields, foundRestaurant);
+        merge(fields, foundRestaurant, request);
 
         return update(id, foundRestaurant);
     }
@@ -112,21 +119,38 @@ public class RestaurantController {
      *                         the fields to update (e.g., {"name": "New Name", "deliveryFee": 5.99}).
      *  @param restaurantTarget the target Restaurant entity to be updated in-place.
      */
-    private static void merge(Map<String, Object> fieldsOrigin, Restaurant restaurantTarget) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Restaurant originRestaurant = objectMapper.convertValue(fieldsOrigin, Restaurant.class);
+    private static void merge(Map<String, Object> fieldsOrigin, Restaurant restaurantTarget, HttpServletRequest request) {
+        ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest(request);
 
-        fieldsOrigin.forEach((nameProperty, valueProperty)-> {
-            Field field = ReflectionUtils.findField(Restaurant.class, nameProperty);
-            field.setAccessible(true);
+        /*
+        Try catch is used here to catch an Exception which has a root cause that can be handled by
+        a specific method inside ApiExceptionHandler.
+        By doing so, I just catch and throw the responsibility to the already existent handler.
+         */
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
 
-            Object newValue = ReflectionUtils.getField(field, originRestaurant);
+            // Forces jackson to throw errors when passing a property doesn't exist through the request.
+            objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
+            Restaurant originRestaurant = objectMapper.convertValue(fieldsOrigin, Restaurant.class);
+
+            fieldsOrigin.forEach((nameProperty, valueProperty)-> {
+                Field field = ReflectionUtils.findField(Restaurant.class, nameProperty);
+                field.setAccessible(true);
+
+                Object newValue = ReflectionUtils.getField(field, originRestaurant);
 
 
-            ReflectionUtils.setField(field, restaurantTarget, newValue);
+                ReflectionUtils.setField(field, restaurantTarget, newValue);
+            });
+
+        }catch (IllegalArgumentException ex){
+            Throwable cause = ExceptionUtils.getRootCause(ex.getCause());
+            throw new HttpMessageNotReadableException(ex.getMessage(),cause, servletServerHttpRequest);
+        }
 
 
-        });
+
     }
 
     @DeleteMapping("/{id}")
