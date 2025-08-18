@@ -49,7 +49,10 @@ public class RestaurantController {
      * @return {@code 200 | 404} status code
      */
     @GetMapping("/{id}")
-    public Restaurant find(@PathVariable Long id){
+    public Restaurant find(@PathVariable Long id) throws IllegalAccessException {
+        if(true){
+            throw new IllegalAccessException("Tetadasdasd");
+        }
         return restaurantRegistryService.findOne(id);
     }
 

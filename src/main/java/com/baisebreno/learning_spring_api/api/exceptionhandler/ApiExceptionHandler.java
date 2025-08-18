@@ -360,6 +360,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
+
+    /**
+     * Handles {@link NoHandlerFoundException}, which occurs when a client attempts
+     * to access a resource or endpoint that does not exist in the application.
+     * <p>
+     * This method builds a standardized {@link Problem} response indicating that the
+     * requested resource could not be found, following the application's error response model.
+     *
+     * @param ex       the exception that was thrown when no handler was found for the request
+     * @param headers  the HTTP headers for the response
+     * @param status   the HTTP status to return (typically 404 Not Found)
+     * @param request  the current web request
+     * @return a {@link ResponseEntity} containing a {@link Problem} object with
+     *         details about the missing resource
+     */
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
