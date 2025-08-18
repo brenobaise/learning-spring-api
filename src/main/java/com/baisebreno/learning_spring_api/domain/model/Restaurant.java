@@ -3,6 +3,7 @@ package com.baisebreno.learning_spring_api.domain.model;
 import com.baisebreno.learning_spring_api.core.validation.DeliveryFee;
 import com.baisebreno.learning_spring_api.core.validation.Groups;
 import com.baisebreno.learning_spring_api.core.validation.Multiple;
+import com.baisebreno.learning_spring_api.core.validation.ValueZeroIncludesDescription;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@ValueZeroIncludesDescription(
+        fieldValue = "deliveryRate",
+        descriptionField = "name",
+        mandatoryDescription = "Free Delivery")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
