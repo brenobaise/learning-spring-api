@@ -384,4 +384,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex,problem,headers,status,request);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUnCaught(Exception ex, WebRequest request){
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ProblemType problemType = ProblemType.SYSTEM_ERROR;
+        String detail = String.format("There was an internal server error, try again or let the system admin know.");
+
+        /*
+        Printing the stack trace needs to be removed for production, we use it until logging replaces this.
+         */
+        ex.printStackTrace();
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex,problem, new HttpHeaders(), status, request);
+    }
 }

@@ -9,7 +9,8 @@ public enum ProblemType {
     RESOURCE_NOT_FOUND("/resource-not-found", "Resource Not Found"),
     ENTITY_IN_USE("/entity-in-use", "Entity In Use, cannot be deleted"),
     BUSINESS_LOGIC_ERROR("/business-logic-error", "Business Logic Violation"),
-    INVALID_PARAMETER("/invalid-parameter", "Invalid Parameter");
+    INVALID_PARAMETER("/invalid-parameter", "Invalid Parameter"),
+    SYSTEM_ERROR("/system-error", "System Error");
     private static final String BASE_URL = "https://algafood.co.uk";
 
 

@@ -1,7 +1,6 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
@@ -49,10 +48,8 @@ public class RestaurantController {
      * @return {@code 200 | 404} status code
      */
     @GetMapping("/{id}")
-    public Restaurant find(@PathVariable Long id) throws IllegalAccessException {
-        if(true){
-            throw new IllegalAccessException("Tetadasdasd");
-        }
+    public Restaurant find(@PathVariable Long id) {
+
         return restaurantRegistryService.findOne(id);
     }
 
