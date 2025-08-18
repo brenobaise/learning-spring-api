@@ -13,8 +13,8 @@ The goal is to document my learning journey in building **Spring RESTful APIs** 
 My future plans are:
 - To add Spring Security.
 - To add another database provider, like Postgresql
-- to add Flyway for database migrations.
-- to add api documentaion like Swagger
+- ~~to add Flyway for database migrations.~~ Implemented.
+- to add api documentation like Swagger
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
 ---
@@ -108,10 +108,12 @@ spring.jpa.hibernate.ddl-auto=create
 spring.jpa.show-sql=true
 ```
 
-> **Note:** Hibernate will automatically create the tables on first run.
+> **Note:** ~~Hibernate will automatically create the tables on first run.~~
+> 
+> As of [Commit b3fb9f5](https://github.com/brenobaise/learning-spring-api/commit/b3fb9f5e17eac6122d79f1cd18b40e1806eabd0d) Flyway is now takes control of table creation and test data. 
 
-I have also provided a `import.sql` file to generate some data into the database, feel free to play around with it.
-
+~~I have also provided a `import.sql` file to generate some data into the database, feel free to play around with it.~~ <br>
+As of [Commit b3fb9f5](https://github.com/brenobaise/learning-spring-api/commit/b3fb9f5e17eac6122d79f1cd18b40e1806eabd0d) `afterMigrate.sql` generates test data automatically.
 ---
 
 ### **2) Run the Application**
