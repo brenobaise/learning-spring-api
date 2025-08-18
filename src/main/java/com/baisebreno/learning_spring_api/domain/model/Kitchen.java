@@ -1,10 +1,13 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
+import com.baisebreno.learning_spring_api.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +23,14 @@ public class Kitchen {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(groups = {Groups.KitchenId.class})
     private Long id;
 
 //    @Column(name = "name of the column in the database") this is automatically mapped by the ORM,
 //    but we can assign it if we already have some column with some data
     @JsonProperty("title")
 //    @JsonIgnore hides the property from the return object, but JsonProperty takes precedence over it.
+    @NotBlank
     private String name;
 
 

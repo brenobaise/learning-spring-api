@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -47,7 +48,7 @@ public class KitchenController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    private Kitchen create(@RequestBody Kitchen kitchen) {
+    private Kitchen create(@Valid @RequestBody Kitchen kitchen) {
         return kitchenRegistryService.save(kitchen);
 
     }
@@ -60,7 +61,7 @@ public class KitchenController {
      * @return {@code 200 | 404} status code
      */
     @PutMapping("/{id}")
-    private Kitchen update(@PathVariable Long id, @RequestBody Kitchen kitchen) {
+    private Kitchen update(@PathVariable Long id, @Valid @RequestBody Kitchen kitchen) {
         Kitchen foundKitchen = kitchenRegistryService.findOne(id);
 
         // update the foundKitchen with new details

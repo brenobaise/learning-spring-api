@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class CityController {
      */
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public City create(@RequestBody City city) {
+    public City create(@Valid @RequestBody City city) {
         try {
             return cityRegistryService.save(city);
         } catch (GeographicalStateNotFoundException e){
@@ -71,7 +72,7 @@ public class CityController {
      * @return {@code 200 | 404}
      */
     @PutMapping("/{id}")
-    public City update(@PathVariable Long id, @RequestBody City city) {
+    public City update(@PathVariable Long id, @Valid @RequestBody City city) {
         try{
             City foundCity = cityRegistryService.findOne(id);
 

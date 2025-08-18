@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +49,7 @@ public class GeographicalStateController {
      */
     @PostMapping()
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<GeographicalState> create(@RequestBody GeographicalState state){
+    public ResponseEntity<GeographicalState> create(@Valid @RequestBody GeographicalState state){
         return ResponseEntity.ok(stateRegistryService.save(state));
     }
 
@@ -60,7 +61,7 @@ public class GeographicalStateController {
      * @return {@code 200 | 404}
      */
     @PutMapping("/{id}")
-    public GeographicalState update(@PathVariable Long id, @RequestBody GeographicalState state){
+    public GeographicalState update(@PathVariable Long id, @Valid @RequestBody GeographicalState state){
         GeographicalState foundState = stateRegistryService.findOne(id);
 
             BeanUtils.copyProperties(state, foundState, "id");

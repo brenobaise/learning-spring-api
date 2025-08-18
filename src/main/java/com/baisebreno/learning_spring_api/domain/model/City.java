@@ -1,9 +1,14 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
+import com.baisebreno.learning_spring_api.Groups;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.ConvertGroup;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -14,9 +19,13 @@ public class City {
     @Id
     private Long id;
 
+    @NotBlank
     @Column(nullable = false)
     private String name;
 
+    @ConvertGroup(to = Groups.GeoGraphicalStateId.class)
+    @Valid
+    @NotNull
     @ManyToOne()
     @JoinColumn( nullable = false)
     private GeographicalState state;
