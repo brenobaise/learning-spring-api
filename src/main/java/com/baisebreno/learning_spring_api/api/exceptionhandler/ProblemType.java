@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ProblemType {
 
     MESSAGE_NOT_READABLE("/message-not-readable", "Message Not Readable"),
-    ENTITY_NOT_FOUND("/entity-not-found", "Entity Not Found"),
+    RESOURCE_NOT_FOUND("/resource-not-found", "Resource Not Found"),
     ENTITY_IN_USE("/entity-in-use", "Entity In Use, cannot be deleted"),
     BUSINESS_LOGIC_ERROR("/business-logic-error", "Business Logic Violation"),
     INVALID_PARAMETER("/invalid-parameter", "Invalid Parameter");
