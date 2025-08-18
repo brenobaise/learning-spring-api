@@ -27,9 +27,11 @@ public class Restaurant {
     @Id
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Name is mandatory.")
+    @Column(nullable = false)
     private String name;
 
+    @NotNull
     @PositiveOrZero
     @Column(name = "delivery_fee")
     private BigDecimal deliveryRate;

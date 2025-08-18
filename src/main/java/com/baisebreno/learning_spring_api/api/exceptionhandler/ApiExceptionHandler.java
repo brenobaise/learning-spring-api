@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -59,6 +63,9 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "There was an internal server error, try again or let the system admin know.";
+
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * Handles {@link EntityNotFoundException}, which is typically thrown when a requested
@@ -462,10 +469,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             then we reduce to a list which is our original goal.
          */
         List<Problem.Field> problemFields = bindingResult.getFieldErrors().stream()
-                .map(fieldError -> Problem.Field.builder()
-                        .name(fieldError.getField()) // name of the property which is not valid
-                        .userMessage(fieldError.getDefaultMessage())
-                        .build())
+                .map(fieldError -> {
+                    String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+
+                   return  Problem.Field.builder()
+                            .name(fieldError.getField()) // name of the property which is not valid
+                            .userMessage(message)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         Problem problem = createProblemBuilder(status, problemType,detail, detail,LocalDateTime.now())
