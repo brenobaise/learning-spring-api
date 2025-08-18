@@ -3,7 +3,10 @@ package com.baisebreno.learning_spring_api.api.exceptionhandler;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -142,35 +145,143 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
+    /**
+     * Handles cases where the HTTP request body cannot be read or parsed.
+     *
+     * <p>This method overrides Spring’s default {@link #handleHttpMessageNotReadable}
+     * to provide a {@link Problem} response instead of a generic error.</p>
+     *
+     * <ul>
+     *   <li>If the root cause is an {@link com.fasterxml.jackson.databind.exc.InvalidFormatException},
+     *       it delegates to {@link #handleInvalidFormatException(InvalidFormatException, HttpHeaders, HttpStatus, WebRequest)}
+     *       to provide detailed feedback about the property and invalid value.</li>
+     *   <li>Otherwise, it responds with a generic "message not readable" problem.</li>
+     * </ul>
+     *
+     * @param ex      the thrown {@link org.springframework.http.converter.HttpMessageNotReadableException}.
+     * @param headers HTTP headers to be written to the response.
+     * @param status  HTTP status code to use (typically 400 Bad Request).
+     * @param request the current web request context.
+     * @return a {@link ResponseEntity} containing a {@link Problem} with details of the parsing failure.
+     */
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
+                                                                  HttpStatus status, WebRequest request) {
+
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
 
-
-        if(rootCause instanceof InvalidFormatException){
-            return handleInvalidFormatException((InvalidFormatException) rootCause,headers,status,request);
+        // Specific case: JSON field has wrong type (e.g. string instead of number).
+        if (rootCause instanceof InvalidFormatException) {
+            return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
+        } else if (rootCause instanceof PropertyBindingException) {
+            return handlePropertyBindingException((PropertyBindingException) rootCause, headers,status,request);
         }
 
+        // Generic unreadable body case (malformed JSON, missing braces, etc.)
         ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
-        String detail = "The request's body is invalid, Check your syntax.";
+        String detail = "The request body is invalid. Please check the JSON syntax.";
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
-    private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, HttpStatus status,
-                                                                WebRequest request) {
+
+
+    /**
+     * Handles Jackson {@link PropertyBindingException} variants that occur when the JSON payload
+     * contains properties that are not allowed or not recognized by the target type.
+     *
+     * <p>Typical cases:
+     * <ul>
+     *   <li>{@link IgnoredPropertyException}: property is explicitly ignored via Jackson annotations/config.</li>
+     *   <li>{@link UnrecognizedPropertyException}: property does not exist on the target type.</li>
+     * </ul>
+     * </p>
+     *
+     * <p>Responds with {@code ProblemType.MESSAGE_NOT_READABLE} and a helpful {@code detail}
+     * message pointing to the offending property path.</p>
+     *
+     * @param ex      the {@link PropertyBindingException} root cause from Jackson.
+     * @param headers HTTP headers to be written to the response.
+     * @param status  HTTP status to use (typically 400 Bad Request).
+     * @param request the current web request context.
+     * @return a {@link ResponseEntity} with a {@link Problem} body describing the error.
+     */
+    private ResponseEntity<Object> handlePropertyBindingException(
+            PropertyBindingException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+
+        // Build a dotted path like "address.street"
+        String path = ex.getPath().stream()
+                .map(ref -> ref.getFieldName())
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining("."));
+
+        ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
+        String detail;
+
+        // If it's an @JsonIgnore Annotated property
+        if (ex instanceof IgnoredPropertyException) {
+            detail = String.format(
+                    "The property '%s' (path: '%s') is not accepted by this resource. Remove it and try again.",
+                    ex.getPropertyName(), path.isEmpty() ? ex.getPropertyName() : path
+            );
+
+        // if the property does not exist.
+        } else if (ex instanceof UnrecognizedPropertyException) {
+            detail = String.format(
+                    "The property '%s' (path: '%s') does not exist. Check for typos or remove it.",
+                    ex.getPropertyName(), path.isEmpty() ? ex.getPropertyName() : path
+            );
+        } else {
+            // Fallback for other PropertyBindingException cases
+            detail = String.format(
+                    "The property '%s' (path: '%s') is invalid for this resource.",
+                    ex.getPropertyName(), path.isEmpty() ? ex.getPropertyName() : path
+            );
+        }
+
+        // creates the problem builder
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    /**
+     * Handles Jackson {@link InvalidFormatException}, which occurs when a property
+     * in the JSON request body receives a value of the wrong type.
+     *
+     * <p>Example: sending <code>{"age": "twenty"}</code> when the field is declared as an {@code Integer}.</p>
+     *
+     * <p>This handler extracts the path to the offending field, the invalid value,
+     * and the expected Java type, then builds a {@link Problem} response with that information.</p>
+     *
+     * @param ex      the {@link InvalidFormatException} containing details about the type mismatch.
+     * @param headers HTTP headers to be written to the response.
+     * @param status  HTTP status code to use (typically 400 Bad Request).
+     * @param request the current web request context.
+     * @return a {@link ResponseEntity} containing a {@link Problem} describing the invalid format error.
+     */
+    private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers,
+                                                                HttpStatus status, WebRequest request) {
+
+        // Build a JSON path like "address.streetNumber"
         String path = ex.getPath().stream()
                 .map(ref -> ref.getFieldName())
                 .collect(Collectors.joining("."));
 
         ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
 
-        String detail = String.format("The property '%s' received the value '%s', which is an invalid type." +
-                        " Submit a value of type %s.", path,
-                ex.getValue().toString(),
-                ex.getTargetType().getSimpleName());
+        // Build a human-readable detail message to be displayed in the HTTP response
+        String detail = String.format(
+                "The property '%s' received the value '%s', which is an invalid type. " +
+                        "Submit a value compatible with type %s.",
+                path,
+                ex.getValue(),
+                ex.getTargetType().getSimpleName()
+        );
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
 
@@ -186,7 +297,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @param detail      human-readable description of this particular occurrence.
      * @return a {@link Problem.ProblemBuilder} primed with {@code status}, {@code type}, {@code title}, and {@code detail}.
      */
-    private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
+    private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType,
+                                                        String detail) {
         return Problem.builder()
                 .status(status.value())
                 .type(problemType.getUri())
