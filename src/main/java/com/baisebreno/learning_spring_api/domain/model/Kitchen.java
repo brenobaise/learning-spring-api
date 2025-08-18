@@ -1,6 +1,6 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
-import com.baisebreno.learning_spring_api.Groups;
+import com.baisebreno.learning_spring_api.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

@@ -1,6 +1,5 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
-import com.baisebreno.learning_spring_api.Groups;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
