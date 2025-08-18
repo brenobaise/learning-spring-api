@@ -385,6 +385,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex,problem,headers,status,request);
     }
 
+    /**
+     * Catch-all handler for any uncaught exceptions that were not matched by more specific handlers.
+     * <p>
+     * Returns a standardized {@link Problem} response with HTTP 500 (Internal Server Error),
+     * ensuring clients receive a consistent error payload without exposing stack traces.
+     * In development, this method currently prints the stack trace; replace this with structured
+     * logging before deploying to production.
+     *
+     * @param ex       the unhandled exception that bubbled up from the application
+     * @param request  the current web request context
+     * @return a {@link ResponseEntity} containing a {@link Problem} describing a system error
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnCaught(Exception ex, WebRequest request){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
