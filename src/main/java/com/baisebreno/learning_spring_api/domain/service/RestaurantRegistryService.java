@@ -1,9 +1,7 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;

@@ -54,25 +54,39 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "There was an internal server error, try again or let the system admin know.";
+
     /**
-     * Handles resource-not-found scenarios.
+     * Handles {@link EntityNotFoundException}, which is typically thrown when a requested
+     * JPA entity or domain object does not exist in the database.
+     * <p>
+     * This method returns a standardized {@link Problem} response with HTTP 404 (Not Found),
+     * following the RFC 7807 "Problem Details for HTTP APIs" specification.
+     * <p>
+     * The response includes both a technical {@code detail} message and a user-friendly
+     * {@code userMessage}, which in this implementation are based on the exception's message.
      *
-     * <p>Typically thrown when the requested entity does not exist in persistence.</p>
+     * @param ex       the {@link EntityNotFoundException} thrown when an entity cannot be found
+     * @param request  the current web request context
+     * @return a {@link ResponseEntity} containing a {@link Problem} object describing the error
+     *         in a structured, standards-compliant format
      *
-     * @param ex      the domain exception describing the missing entity.
-     * @param request the current request context.
-     * @return a 404 Not Found response containing a {@link Problem} body.
+     * @see javax.persistence.EntityNotFoundException
+     * @see com.baisebreno.learning_spring_api.api.exceptionhandler.Problem
      */
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleGeographicalStateNotFound(
-            EntityNotFoundException ex, WebRequest request) {
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex, WebRequest request){
 
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
+        String detail = ex.getMessage();
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(status,problemType,detail)
+                .userMessage(ex.getMessage())
+                .build();
 
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+        return handleExceptionInternal(ex,problem,new HttpHeaders(), status, request);
+
     }
 
     /**
@@ -91,7 +105,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.CONFLICT;
         ProblemType problemType = ProblemType.ENTITY_IN_USE;
 
-        Problem problem = createProblemBuilder(status, problemType, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
+                .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
@@ -244,7 +260,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         // creates the problem builder
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+                .build();
+
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
@@ -282,7 +301,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getTargetType().getSimpleName()
         );
 
-        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(INTERNAL_SERVER_ERROR_MESSAGE)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
@@ -401,7 +422,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnCaught(Exception ex, WebRequest request){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ProblemType problemType = ProblemType.SYSTEM_ERROR;
-        String detail = String.format("There was an internal server error, try again or let the system admin know.");
+        String detail = String.format(INTERNAL_SERVER_ERROR_MESSAGE);
 
         /*
         Printing the stack trace needs to be removed for production, we use it until logging replaces this.
