@@ -19,6 +19,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class RestaurantController {
      * @return It may return the added resource, or a bad request status code.
      */
     @PostMapping()
-    public Restaurant add(@RequestBody Restaurant restaurant){
+    public Restaurant add(@Valid @RequestBody Restaurant restaurant){
         try{
             return restaurantRegistryService.save(restaurant);
         }catch (RestaurantNotFoundException e){
