@@ -2,6 +2,7 @@ package com.baisebreno.learning_spring_api.domain.model;
 
 import com.baisebreno.learning_spring_api.core.validation.DeliveryFee;
 import com.baisebreno.learning_spring_api.core.validation.Groups;
+import com.baisebreno.learning_spring_api.core.validation.Multiple;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +36,7 @@ public class Restaurant {
     @NotNull
     @Column(name = "delivery_fee")
     @DeliveryFee
+    @Multiple(number = 5)
     private BigDecimal deliveryRate;
 
     @ConvertGroup(from = Default.class, to = Groups.KitchenId.class)
