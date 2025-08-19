@@ -4,6 +4,7 @@ import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Assertions;
 
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
@@ -27,6 +28,7 @@ class KitchenRegistryServiceTestsIT {
 
     @Autowired
     RestaurantRegistryService restaurantRegistryService;
+
 
 	@Test
 	void contextLoads() {

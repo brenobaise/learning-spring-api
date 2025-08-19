@@ -7,6 +7,7 @@ import static io.restassured.RestAssured.given;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.aspectj.lang.annotation.Before;
+import org.flywaydb.core.Flyway;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,17 +15,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
 
+@TestPropertySource("/application-test.properties") //tells the spring to look at a specific properties file
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class KitchenRegistryAPITestsIT {
     @LocalServerPort
     private int port;
+
+//    @Autowired
+//    Flyway flyway;
 
     @BeforeEach
     public void setup () {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
         RestAssured.basePath = "/kitchens";
+
+//        flyway.migrate(); // calls afterMigrate.sql which cleans the data inside the db.
     }
     @Autowired
     KitchenRegistryService kitchenRegistryService;
