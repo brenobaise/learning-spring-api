@@ -5,6 +5,7 @@ import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.service.KitchenRegistryService;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import com.baisebreno.learning_spring_api.util.DatabaseCleaner;
 import io.restassured.RestAssured;
@@ -56,8 +57,6 @@ public class KitchenRegistryAPITestsIT {
     @Test
     public void shouldReturnStatus200_WhenGetAllKitchens(){
         given()
-                .basePath("/kitchens")
-                .port(port)
                 .accept(ContentType.JSON)
             .when()
                 .get()
@@ -88,6 +87,32 @@ public class KitchenRegistryAPITestsIT {
                 .statusCode(HttpStatus.CREATED.value());
     }
 
+    @Test
+    public void shouldReturnCorrectResponseAndStatus_WhenKitchenFind(){
+
+        given()
+                .pathParam("id", 2) // passes params on the url
+                .accept(ContentType.JSON)
+            .when()
+                .get("/{id}") //  -> does a GET /kitchens/2
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("title", equalTo("American")); // checks the response body for a "title" : "American".
+    }
+
+    @Test
+    public void shouldReturnStatus404_WhenKitchenFind(){
+
+        given()
+                .pathParam("id", 2222) // passes params on the url
+                .accept(ContentType.JSON)
+            .when()
+                .get("/{id}") //  -> does a GET /kitchens/2
+            .then()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    /* Utils */
     private void prepareData(){
         Kitchen kitchen = new Kitchen();
         kitchen.setName("Chinese");
