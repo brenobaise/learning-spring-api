@@ -1,9 +1,12 @@
 package com.baisebreno.learning_spring_api;
 
+import com.baisebreno.learning_spring_api.domain.model.Kitchen;
+import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.service.KitchenRegistryService;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
 import static io.restassured.RestAssured.given;
 
+import com.baisebreno.learning_spring_api.util.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.aspectj.lang.annotation.Before;
@@ -23,8 +26,11 @@ public class KitchenRegistryAPITestsIT {
     @LocalServerPort
     private int port;
 
-//    @Autowired
-//    Flyway flyway;
+    @Autowired
+    DatabaseCleaner databaseCleaner;
+
+    @Autowired
+    KitchenRepository kitchenRepository;
 
     @BeforeEach
     public void setup () {
@@ -32,7 +38,9 @@ public class KitchenRegistryAPITestsIT {
         RestAssured.port = port;
         RestAssured.basePath = "/kitchens";
 
-//        flyway.migrate(); // calls afterMigrate.sql which cleans the data inside the db.
+        databaseCleaner.clearTables();
+        prepareData();
+
     }
     @Autowired
     KitchenRegistryService kitchenRegistryService;
@@ -64,8 +72,8 @@ public class KitchenRegistryAPITestsIT {
             .when()
                 .get()
             .then()
-                .body("", Matchers.hasSize(4))
-                .body("title", Matchers.hasItems("Argentinian","Brazilian"));
+                .body("", Matchers.hasSize(2))
+                .body("title", Matchers.hasItems("American","Chinese"));
     }
 
     @Test
@@ -78,5 +86,16 @@ public class KitchenRegistryAPITestsIT {
                 .post()
             .then()
                 .statusCode(HttpStatus.CREATED.value());
+    }
+
+    private void prepareData(){
+        Kitchen kitchen = new Kitchen();
+        kitchen.setName("Chinese");
+        kitchenRepository.save(kitchen);
+
+        Kitchen kitchen2 = new Kitchen();
+        kitchen2.setName("American");
+        kitchenRepository.save(kitchen2);
+
     }
 }
