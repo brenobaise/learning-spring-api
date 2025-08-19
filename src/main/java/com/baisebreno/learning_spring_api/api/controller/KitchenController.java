@@ -25,6 +25,7 @@ public class KitchenController {
     private KitchenRegistryService kitchenRegistryService;
 
     @GetMapping()
+
     public List<Kitchen> getAll() {
         return kitchenRepository.findAll();
     }
