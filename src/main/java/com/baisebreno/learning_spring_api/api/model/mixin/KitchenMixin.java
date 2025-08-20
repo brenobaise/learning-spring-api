@@ -7,5 +7,5 @@ import java.util.List;
 
 public class KitchenMixin {
     @JsonIgnore
-    private List<Restaurant> restaurantList;
+    private List<Restaurant> restaurants;
 }

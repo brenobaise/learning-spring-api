@@ -35,6 +35,6 @@ public class Kitchen {
 
 
     @OneToMany(mappedBy = "kitchen")
-    private List<Restaurant> restaurant = new ArrayList<>();
+    private List<Restaurant> restaurants = new ArrayList<>();
 
 }
