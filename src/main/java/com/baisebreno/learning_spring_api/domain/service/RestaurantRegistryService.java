@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This service is responsible for persisting changes on the Restaurant Model.
@@ -30,6 +31,7 @@ public class RestaurantRegistryService {
 
 
 
+    @Transactional
     public Restaurant save(Restaurant restaurant) {
 
         Long kitchenId = restaurant.getKitchen().getId();
@@ -43,7 +45,7 @@ public class RestaurantRegistryService {
     }
 
 
-
+    @Transactional
     public void remove(Long restaurantId) {
         try {
             restaurantRepository.deleteById(restaurantId);

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This service class is responsible for persisting changes on the Kitchen model.
@@ -22,10 +23,12 @@ public class KitchenRegistryService {
     @Autowired
     private KitchenRepository kitchenRepository;
 
+    @Transactional
     public Kitchen save(Kitchen kitchen){
        return kitchenRepository.save(kitchen);
     }
 
+    @Transactional
     public void remove(Long kitchenId ){
         try {
             kitchenRepository.deleteById(kitchenId);

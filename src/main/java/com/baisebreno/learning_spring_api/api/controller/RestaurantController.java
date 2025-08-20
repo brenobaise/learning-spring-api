@@ -65,6 +65,7 @@ public class RestaurantController {
      * @return It may return the added resource, or a bad request status code.
      */
     @PostMapping()
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Restaurant add(@Valid @RequestBody Restaurant restaurant){
         try{
             return restaurantRegistryService.save(restaurant);

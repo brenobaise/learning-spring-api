@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class is responsible for persisting changes on the GeographicalState Model.
@@ -28,10 +29,12 @@ public class GeographicalStateRegistryService {
         );
     }
 
+    @Transactional
     public GeographicalState save(GeographicalState state) {
         return stateRepository.save(state);
     }
 
+    @Transactional
     public void remove(Long stateId){
         try{
             stateRepository.deleteById(stateId);

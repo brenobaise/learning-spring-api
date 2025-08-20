@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class holds the responsibility of persisting changes on the City model.
@@ -26,6 +27,7 @@ public class CityRegistryService {
     private GeographicalStateRegistryService stateService;
 
 
+    @Transactional
     public City save(City city) {
         Long stateId = city.getState().getId();
 
@@ -36,6 +38,7 @@ public class CityRegistryService {
         return cityRepository.save(city);
     }
 
+    @Transactional
     public void remove(Long cityId) {
         try {
             cityRepository.deleteById(cityId);
