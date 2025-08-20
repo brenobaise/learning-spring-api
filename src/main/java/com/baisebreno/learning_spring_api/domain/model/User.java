@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -29,7 +29,7 @@ public class User {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime registeredDate;
+    private OffsetDateTime registeredDate;
 
     @ManyToMany
     @JoinTable(name = "user_user_groups", joinColumns = @JoinColumn(name = "user_id"),

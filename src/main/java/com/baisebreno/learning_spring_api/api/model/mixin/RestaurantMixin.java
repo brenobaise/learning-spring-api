@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public abstract class RestaurantMixin {
@@ -23,10 +23,10 @@ public abstract class RestaurantMixin {
     private Address address;
 
 //    @JsonIgnore
-    private LocalDateTime registeredDate;
+    private OffsetDateTime registeredDate;
 
 //    @JsonIgnore
-    private LocalDateTime lastUpdatedDate;
+    private OffsetDateTime lastUpdatedDate;
 
     @JsonIgnore
     private List<PaymentMethod> paymentMethods;
