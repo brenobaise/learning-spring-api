@@ -49,6 +49,20 @@ public class PaymentMethodController {
         }
     }
 
+    @PutMapping("/{id}")
+    public PaymentMethodModel update(@PathVariable Long id,
+                                     @Valid @RequestBody PaymentMethodInputModel paymentMethodInputModel){
+        PaymentMethod currentMethod = paymentMethodService.findOne(id);
+
+        assembler.copyToDomainObject(paymentMethodInputModel, currentMethod);
+
+        currentMethod = paymentMethodService.save(currentMethod);
+
+
+        return assembler.toModel(currentMethod);
+
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){

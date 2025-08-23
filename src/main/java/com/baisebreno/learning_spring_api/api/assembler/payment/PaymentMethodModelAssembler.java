@@ -28,4 +28,8 @@ public class PaymentMethodModelAssembler {
         return genericAssembler.toSubject(paymentMethodInputModel, PaymentMethod.class);
     }
 
+    public void copyToDomainObject(PaymentMethodInputModel inputModel, PaymentMethod paymentMethod){
+        genericAssembler.copy(inputModel,paymentMethod);
+    }
+
 }
