@@ -40,7 +40,7 @@ public class RestaurantInputDisassembler {
 
     public void copyToDomainObject(RestaurantInputModel restaurantInputModel, Restaurant restaurant){
         // to prevent  org.hibernate.HibernateException: identifier of an instance of
-        //		 domain.model.Kitchen was altered from 1 to 2
+        //		 domain.model.Restaurant was altered from 1 to 2
         restaurant.setKitchen(new Kitchen());
 
          modelMapper.map(restaurantInputModel, restaurant);

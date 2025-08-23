@@ -1,8 +1,10 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
 
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
+import com.baisebreno.learning_spring_api.api.assembler.state.GeoStateInputDisassembler;
+import com.baisebreno.learning_spring_api.api.assembler.state.GeoStateModelAssembler;
+import com.baisebreno.learning_spring_api.api.model.GeoStateModel;
+import com.baisebreno.learning_spring_api.api.model.input.GeoStateInput;
 import com.baisebreno.learning_spring_api.domain.model.GeographicalState;
 import com.baisebreno.learning_spring_api.domain.repository.GeographicalStateRepository;
 import com.baisebreno.learning_spring_api.domain.service.GeographicalStateRegistryService;
@@ -27,47 +29,53 @@ public class GeographicalStateController {
     @Autowired
     private GeographicalStateRegistryService stateRegistryService;
 
+    @Autowired
+    private GeoStateModelAssembler geoStateModelAssembler;
+    @Autowired
+    private GeoStateInputDisassembler geoStateInputDisassembler;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<GeographicalState> getAll(){
-        return stateRepository.findAll();
+    public List<GeoStateModel> getAll(){
+        return geoStateModelAssembler.toCollectionModel(stateRepository.findAll());
     }
 
     /**
-     * Searches the database for an {@link GeographicalState} entity by a given id.
+     * Searches the database for an {@link GeoStateModel} entity by a given id.
      * @param id the id of the target entity.
      * @return {@code 200  | 404} status code.
      */
     @GetMapping("/{id}")
-    public GeographicalState find(@PathVariable Long id){
-        return  stateRegistryService.findOne(id);
+    public GeoStateModel find(@PathVariable Long id){
+        return  geoStateModelAssembler.toModel(stateRegistryService.findOne(id));
     }
 
     /**
-     * Persists a new {@link GeographicalState} entity into the database.
-     * @param state the representational model carrying the new entity.
+     * Persists a new {@link GeoStateModel} entity into the database.
+     * @param geoStateInput the representational model carrying the new entity.
      * @return {@code 200} status code.
      */
     @PostMapping()
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<GeographicalState> create(@Valid @RequestBody GeographicalState state){
-        return ResponseEntity.ok(stateRegistryService.save(state));
+    public ResponseEntity<GeoStateModel> create(@Valid @RequestBody GeoStateInput geoStateInput){
+        GeographicalState state = geoStateInputDisassembler.toDomainObject(geoStateInput);
+        return ResponseEntity.ok(geoStateModelAssembler.toModel(stateRegistryService.save(state)));
     }
 
 
     /**
      * Updates an entity by a given id.
      * @param id the id of the target entity.
-     * @param state the representational model carrying the new values.
+     * @param geoStateInput the representational model carrying the new values.
      * @return {@code 200 | 404}
      */
     @PutMapping("/{id}")
-    public GeographicalState update(@PathVariable Long id, @Valid @RequestBody GeographicalState state){
+    public GeoStateModel update(@PathVariable Long id, @Valid @RequestBody GeoStateInput geoStateInput){
         GeographicalState foundState = stateRegistryService.findOne(id);
 
-            BeanUtils.copyProperties(state, foundState, "id");
+            geoStateInputDisassembler.copyToDomainObject(geoStateInput, foundState);
             foundState = stateRegistryService.save(foundState);
 
-        return foundState;
+        return geoStateModelAssembler.toModel(foundState);
     }
 
     /**

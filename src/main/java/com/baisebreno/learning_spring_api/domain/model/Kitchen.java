@@ -30,7 +30,6 @@ public class Kitchen {
 //    but we can assign it if we already have some column with some data
     @JsonProperty("title")
 //    @JsonIgnore hides the property from the return object, but JsonProperty takes precedence over it.
-    @NotBlank
     private String name;
 
 
