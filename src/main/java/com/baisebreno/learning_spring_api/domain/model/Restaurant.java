@@ -33,25 +33,21 @@ public class Restaurant {
     @Id
     private Long id;
 
-//    @NotBlank(message = "Name is mandatory.")
     @Column(nullable = false)
     private String name;
 
-//    @NotNull
     @Column(name = "delivery_fee")
-//    @DeliveryFee
-//    @Multiple(number = 5)
     private BigDecimal deliveryRate;
 
-//    @ConvertGroup(from = Default.class, to = Groups.KitchenId.class)
-//    @Valid // Enforces cascade validation
-//    @NotNull
     @ManyToOne() // fetch = FetchType.LAZY only fetches when needed
     @JoinColumn(name = "kitchen_id", nullable = false)
     private Kitchen kitchen;
 
     @Embedded
     private Address address;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
 
     @CreationTimestamp()
     @Column(nullable = false, columnDefinition = "datetime")
@@ -69,4 +65,19 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant")
     private List<Product> products = new ArrayList<>();
+
+
+    /**
+     * Activates this restaurant instance.
+     */
+    public void activate(){
+        setIsActive(true);
+    }
+
+    /**
+     * Deactivates this restaurant instance.
+     */
+    public void deactivate(){
+        setIsActive(false);
+    }
 }

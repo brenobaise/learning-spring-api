@@ -61,7 +61,26 @@ public class RestaurantRegistryService {
 
     public Restaurant findOne(Long restaurantId) {
         return restaurantRepository.findById(restaurantId).orElseThrow(
-                () -> new RestaurantNotFoundException(restaurantId)
-        );
+                () -> new RestaurantNotFoundException(restaurantId));
+    }
+
+    /**
+     * Changes the status of a Restaurant to active (true).
+     * @param restaurantId the target id
+     */
+    @Transactional
+    public void activate(Long restaurantId){
+        Restaurant restaurant = findOne(restaurantId);
+        restaurant.activate();
+    }
+
+    /**
+     * Changes the status of a Restaurant to deactivated(false)
+     * @param restaurantId the target id
+     */
+    @Transactional
+    public void deactivate(Long restaurantId){
+        Restaurant restaurant = findOne(restaurantId);
+        restaurant.deactivate();
     }
 }
