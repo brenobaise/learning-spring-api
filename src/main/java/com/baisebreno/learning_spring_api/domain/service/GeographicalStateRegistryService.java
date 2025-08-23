@@ -38,6 +38,7 @@ public class GeographicalStateRegistryService {
     public void remove(Long stateId){
         try{
             stateRepository.deleteById(stateId);
+            stateRepository.flush();
 
         }catch (EmptyResultDataAccessException e){
             throw new GeographicalStateNotFoundException(stateId);

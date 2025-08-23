@@ -42,6 +42,7 @@ public class CityRegistryService {
     public void remove(Long cityId) {
         try {
             cityRepository.deleteById(cityId);
+            cityRepository.flush();
 
         } catch (EmptyResultDataAccessException e) {
             throw new CityNotFoundException(cityId);
