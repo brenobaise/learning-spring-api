@@ -23,7 +23,7 @@ public class Kitchen {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(groups = {Groups.KitchenId.class})
+//    @NotNull(groups = {Groups.KitchenId.class})
     private Long id;
 
 //    @Column(name = "name of the column in the database") this is automatically mapped by the ORM,

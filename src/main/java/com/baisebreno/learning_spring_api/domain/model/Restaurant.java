@@ -33,19 +33,19 @@ public class Restaurant {
     @Id
     private Long id;
 
-    @NotBlank(message = "Name is mandatory.")
+//    @NotBlank(message = "Name is mandatory.")
     @Column(nullable = false)
     private String name;
 
-    @NotNull
+//    @NotNull
     @Column(name = "delivery_fee")
-    @DeliveryFee
+//    @DeliveryFee
 //    @Multiple(number = 5)
     private BigDecimal deliveryRate;
 
-    @ConvertGroup(from = Default.class, to = Groups.KitchenId.class)
-    @Valid // Enforces cascade validation
-    @NotNull
+//    @ConvertGroup(from = Default.class, to = Groups.KitchenId.class)
+//    @Valid // Enforces cascade validation
+//    @NotNull
     @ManyToOne() // fetch = FetchType.LAZY only fetches when needed
     @JoinColumn(name = "kitchen_id", nullable = false)
     private Kitchen kitchen;
