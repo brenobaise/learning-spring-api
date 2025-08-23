@@ -1,38 +1,22 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
-import com.baisebreno.learning_spring_api.api.assembler.RestaurantModelAssembler;
-import com.baisebreno.learning_spring_api.api.model.KitchenModel;
+import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantInputDisassembler;
+import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantModelAssembler;
 import com.baisebreno.learning_spring_api.api.model.RestaurantModel;
-import com.baisebreno.learning_spring_api.api.model.input.KitchenIdInput;
 import com.baisebreno.learning_spring_api.api.model.input.RestaurantInputModel;
-import com.baisebreno.learning_spring_api.core.validation.ValidationException;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -44,10 +28,10 @@ public class RestaurantController {
     private RestaurantRegistryService restaurantRegistryService;
 
     @Autowired
-    private SmartValidator smartValidator;
+    private RestaurantModelAssembler restaurantModelAssembler;
 
     @Autowired
-    private RestaurantModelAssembler restaurantModelAssembler;
+    private RestaurantInputDisassembler restaurantInputDisassembler;
 
     /**
      * This handler returns all {@link Restaurant} records in the database.
@@ -80,7 +64,7 @@ public class RestaurantController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public RestaurantModel add(@Valid @RequestBody RestaurantInputModel restaurantInputModel){
         try{
-            Restaurant restaurant = toDomainObject(restaurantInputModel);
+            Restaurant restaurant = restaurantInputDisassembler.toDomainObject(restaurantInputModel);
             return restaurantModelAssembler.toModel(restaurantRegistryService.save(restaurant));
         }catch (RestaurantNotFoundException e){
             throw new BusinessException(e.getMessage());
@@ -96,12 +80,10 @@ public class RestaurantController {
     @PutMapping("/{id}")
     public RestaurantModel update(@Valid @PathVariable Long id, @Valid @RequestBody RestaurantInputModel restaurantInputModel){
            try {
-               Restaurant restaurant = toDomainObject(restaurantInputModel);
-
                Restaurant foundRestaurant = restaurantRegistryService.findOne(id);
 
-               BeanUtils.copyProperties(restaurant, foundRestaurant,
-                       "id","paymentType","address","registeredDate","products");
+               restaurantInputDisassembler.copyToDomainObject(restaurantInputModel,foundRestaurant);
+
                return restaurantModelAssembler.toModel(restaurantRegistryService.save(foundRestaurant));
            }catch (KitchenNotFoundException e){
                throw new BusinessException(e.getMessage());
@@ -116,15 +98,5 @@ public class RestaurantController {
     }
 
 
-    private Restaurant toDomainObject(RestaurantInputModel restaurantInputModel){
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(restaurantInputModel.getName());
-        restaurant.setDeliveryRate(restaurantInputModel.getDeliveryFee());
 
-        Kitchen kitchen = new Kitchen();
-        kitchen.setId(restaurantInputModel.getKitchen().getId());
-
-        restaurant.setKitchen(kitchen);
-        return restaurant;
-    }
 }

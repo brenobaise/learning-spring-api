@@ -1,5 +1,9 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
+import com.baisebreno.learning_spring_api.api.assembler.kitchen.KitchenInputDisassembler;
+import com.baisebreno.learning_spring_api.api.assembler.kitchen.KitchenModelAssembler;
+import com.baisebreno.learning_spring_api.api.model.KitchenModel;
+import com.baisebreno.learning_spring_api.api.model.input.KitchenInputModel;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.service.KitchenRegistryService;
@@ -24,10 +28,15 @@ public class KitchenController {
     @Autowired
     private KitchenRegistryService kitchenRegistryService;
 
-    @GetMapping()
+    @Autowired
+    private KitchenModelAssembler kitchenModelAssembler;
 
-    public List<Kitchen> getAll() {
-        return kitchenRepository.findAll();
+    @Autowired
+    private KitchenInputDisassembler kitchenInputDisassembler;
+
+    @GetMapping()
+    public List<KitchenModel> getAll() {
+        return kitchenModelAssembler.toCollectionModel(kitchenRepository.findAll());
     }
 
 
@@ -37,8 +46,8 @@ public class KitchenController {
      * @return {@code 200 | 404 } status code
      */
     @GetMapping("{id}")
-    private Kitchen find(@PathVariable Long id) {
-        return kitchenRegistryService.findOne(id);
+    private KitchenModel find(@PathVariable Long id) {
+        return kitchenModelAssembler.toModel(kitchenRegistryService.findOne(id));
     }
 
     /**
@@ -49,8 +58,9 @@ public class KitchenController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    private Kitchen create(@Valid @RequestBody Kitchen kitchen) {
-        return kitchenRegistryService.save(kitchen);
+    private KitchenModel create(@Valid @RequestBody KitchenInputModel kitchen) {
+        Kitchen newKitchen = kitchenInputDisassembler.toDomainObject(kitchen);
+        return kitchenModelAssembler.toModel(kitchenRegistryService.save(newKitchen));
 
     }
 
@@ -62,14 +72,15 @@ public class KitchenController {
      * @return {@code 200 | 404} status code
      */
     @PutMapping("/{id}")
-    private Kitchen update(@PathVariable Long id, @Valid @RequestBody Kitchen kitchen) {
+    private KitchenModel update(@PathVariable Long id,
+                                @Valid @RequestBody KitchenInputModel kitchenInputModel) {
         Kitchen foundKitchen = kitchenRegistryService.findOne(id);
 
         // update the foundKitchen with new details
-        BeanUtils.copyProperties(kitchen, foundKitchen, "id");
+        kitchenInputDisassembler.copyToDomainObject(kitchenInputModel, foundKitchen);
 
         // persist changes to the database.
-        return kitchenRegistryService.save(foundKitchen);
+        return kitchenModelAssembler.toModel(kitchenRegistryService.save(foundKitchen));
     }
 
 

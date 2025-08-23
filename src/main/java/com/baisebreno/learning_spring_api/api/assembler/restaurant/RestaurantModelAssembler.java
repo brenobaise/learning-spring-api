@@ -1,8 +1,9 @@
-package com.baisebreno.learning_spring_api.api.assembler;
+package com.baisebreno.learning_spring_api.api.assembler.restaurant;
 
-import com.baisebreno.learning_spring_api.api.model.KitchenModel;
 import com.baisebreno.learning_spring_api.api.model.RestaurantModel;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 @Component
 public class RestaurantModelAssembler {
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     /**
      * Converts a single {@link Restaurant} domain object into a {@link RestaurantModel}.
      *
@@ -26,20 +30,7 @@ public class RestaurantModelAssembler {
      * @return a {@link RestaurantModel} containing the transformed data
      */
     public RestaurantModel toModel(Restaurant restaurant) {
-        RestaurantModel model = new RestaurantModel();
-        KitchenModel kmodel = new KitchenModel();
-
-        // Map Kitchen information
-        kmodel.setId(restaurant.getKitchen().getId());
-        kmodel.setName(restaurant.getKitchen().getName());
-
-        // Map Restaurant information
-        model.setId(restaurant.getId());
-        model.setName(restaurant.getName());
-        model.setDeliveryRate(restaurant.getDeliveryRate());
-        model.setKitchen(kmodel);
-
-        return model;
+        return modelMapper.map(restaurant, RestaurantModel.class);
     }
 
     /**
