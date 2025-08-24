@@ -1,22 +1,14 @@
 package com.baisebreno.learning_spring_api.api.controller;
 
 import com.baisebreno.learning_spring_api.api.assembler.groups.UserGroupModelAssembler;
-import com.baisebreno.learning_spring_api.api.assembler.payment.PaymentMethodModelAssembler;
-import com.baisebreno.learning_spring_api.api.model.PaymentMethodModel;
 import com.baisebreno.learning_spring_api.api.model.UserGroupModel;
-import com.baisebreno.learning_spring_api.api.model.input.PaymentMethodInputModel;
 import com.baisebreno.learning_spring_api.api.model.input.UserGroupInputModel;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.UserGroupNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
 import com.baisebreno.learning_spring_api.domain.model.UserGroup;
-import com.baisebreno.learning_spring_api.domain.repository.PaymentTypeRepository;
 import com.baisebreno.learning_spring_api.domain.repository.UserGroupsRepository;
-import com.baisebreno.learning_spring_api.domain.service.PaymentMethodService;
 import com.baisebreno.learning_spring_api.domain.service.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/groups")
-public class UseGroupController {
+public class UserGroupController {
 
     @Autowired
     UserGroupsRepository repository;
