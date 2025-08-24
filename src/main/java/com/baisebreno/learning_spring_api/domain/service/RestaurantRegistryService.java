@@ -2,6 +2,7 @@ package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
+import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
@@ -27,6 +28,9 @@ public class RestaurantRegistryService {
     @Autowired
     KitchenRegistryService kitchenRegistryService;
 
+    @Autowired
+    CityRegistryService cityRegistryService;
+
     public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
 
 
@@ -35,10 +39,13 @@ public class RestaurantRegistryService {
     public Restaurant save(Restaurant restaurant) {
 
         Long kitchenId = restaurant.getKitchen().getId();
+        Long cityId = restaurant.getAddress().getCity().getId();
 
         Kitchen kitchen = kitchenRegistryService.findOne(kitchenId);
+        City city = cityRegistryService.findOne(cityId);
 
         restaurant.setKitchen(kitchen);
+        restaurant.getAddress().setCity(city);
 
 
         return restaurantRepository.save(restaurant);

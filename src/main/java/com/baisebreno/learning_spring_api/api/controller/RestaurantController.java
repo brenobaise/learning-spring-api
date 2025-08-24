@@ -5,6 +5,7 @@ import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantMod
 import com.baisebreno.learning_spring_api.api.model.RestaurantModel;
 import com.baisebreno.learning_spring_api.api.model.input.RestaurantInputModel;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
+import com.baisebreno.learning_spring_api.domain.exceptions.CityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
@@ -66,7 +67,7 @@ public class RestaurantController {
         try{
             Restaurant restaurant = restaurantInputDisassembler.toDomainObject(restaurantInputModel);
             return restaurantModelAssembler.toModel(restaurantRegistryService.save(restaurant));
-        }catch (RestaurantNotFoundException e){
+        }catch (KitchenNotFoundException | CityNotFoundException e){
             throw new BusinessException(e.getMessage());
         }
     }
@@ -85,7 +86,7 @@ public class RestaurantController {
                restaurantInputDisassembler.copyToDomainObject(restaurantInputModel,foundRestaurant);
 
                return restaurantModelAssembler.toModel(restaurantRegistryService.save(foundRestaurant));
-           }catch (KitchenNotFoundException e){
+           }catch (KitchenNotFoundException | CityNotFoundException e){
                throw new BusinessException(e.getMessage());
            }
 

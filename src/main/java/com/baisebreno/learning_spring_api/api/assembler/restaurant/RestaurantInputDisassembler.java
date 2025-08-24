@@ -1,6 +1,7 @@
 package com.baisebreno.learning_spring_api.api.assembler.restaurant;
 
 import com.baisebreno.learning_spring_api.api.model.input.RestaurantInputModel;
+import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import org.modelmapper.ModelMapper;
@@ -42,6 +43,10 @@ public class RestaurantInputDisassembler {
         // to prevent  org.hibernate.HibernateException: identifier of an instance of
         //		 domain.model.Restaurant was altered from 1 to 2
         restaurant.setKitchen(new Kitchen());
+
+        if(restaurant.getAddress() != null){
+            restaurant.getAddress().setCity(new City());
+        }
 
          modelMapper.map(restaurantInputModel, restaurant);
     }

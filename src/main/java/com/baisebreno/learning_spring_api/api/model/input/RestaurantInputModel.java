@@ -18,12 +18,12 @@ public class RestaurantInputModel {
 
     @NotNull
     @PositiveOrZero
-    private BigDecimal deliveryFee;
+    private BigDecimal deliveryRate;
 
     @Valid
     @NotNull
     private KitchenIdInput kitchen;
 
-    @Valid
+    @Valid @NotNull
     private AddressInputModel address;
 }
