@@ -2,6 +2,7 @@ package com.baisebreno.learning_spring_api.api.controller;
 
 import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantInputDisassembler;
 import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantModelAssembler;
+import com.baisebreno.learning_spring_api.api.model.PaymentMethodModel;
 import com.baisebreno.learning_spring_api.api.model.RestaurantModel;
 import com.baisebreno.learning_spring_api.api.model.input.RestaurantInputModel;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;

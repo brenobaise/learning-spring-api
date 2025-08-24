@@ -4,6 +4,7 @@ import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.Kitchen;
+import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
@@ -23,16 +24,15 @@ public class RestaurantRegistryService {
     RestaurantRepository restaurantRepository;
 
     @Autowired
-    KitchenRepository kitchenRepository;
-
-    @Autowired
     KitchenRegistryService kitchenRegistryService;
 
     @Autowired
     CityRegistryService cityRegistryService;
 
-    public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
+    @Autowired
+    PaymentMethodService paymentMethodService;
 
+    public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
 
 
     @Transactional
@@ -90,4 +90,22 @@ public class RestaurantRegistryService {
         Restaurant restaurant = findOne(restaurantId);
         restaurant.deactivate();
     }
+
+    @Transactional
+    public void removePaymentMethod(Long restaurantId, Long paymentMethodId){
+        Restaurant restaurant = findOne(restaurantId);
+
+        PaymentMethod paymentMethod = paymentMethodService.findOne(paymentMethodId);
+        restaurant.removePaymentMethod(paymentMethod);
+    }
+
+    @Transactional
+    public void addPaymentMethod(Long restaurantId, Long paymentMethodId){
+        Restaurant restaurant = findOne(restaurantId);
+
+        PaymentMethod paymentMethod = paymentMethodService.findOne(paymentMethodId);
+        restaurant.addPaymentMethod(paymentMethod);
+    }
+
+
 }

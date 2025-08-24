@@ -1,7 +1,5 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
-import com.baisebreno.learning_spring_api.core.validation.DeliveryFee;
-import com.baisebreno.learning_spring_api.core.validation.Groups;
 import com.baisebreno.learning_spring_api.core.validation.ValueZeroIncludesDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,15 +7,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @ValueZeroIncludesDescription(
         fieldValue = "deliveryRate",
@@ -61,7 +56,7 @@ public class Restaurant {
     joinColumns = @JoinColumn(name = "restaurant_id"),
     inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
     @ManyToMany()
-    private List<PaymentMethod> paymentMethods = new ArrayList<>();
+    private Set<PaymentMethod> paymentMethods = new HashSet<>();
 
     @OneToMany(mappedBy = "restaurant")
     private List<Product> products = new ArrayList<>();
@@ -79,5 +74,13 @@ public class Restaurant {
      */
     public void deactivate(){
         setIsActive(false);
+    }
+
+    public void removePaymentMethod(PaymentMethod paymentMethod){
+        getPaymentMethods().remove(paymentMethod);
+    }
+
+    public void addPaymentMethod(PaymentMethod paymentMethod){
+        getPaymentMethods().add(paymentMethod);
     }
 }

@@ -7,6 +7,7 @@ import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -20,7 +21,7 @@ public class PaymentMethodModelAssembler {
         return genericAssembler.toSubject(paymentMethod, PaymentMethodModel.class);
     }
 
-    public List<PaymentMethodModel> toCollectionModel(List<PaymentMethod> methods){
+    public List<PaymentMethodModel> toCollectionModel(Collection<PaymentMethod> methods){
         return genericAssembler.toCollectionModel(methods,PaymentMethodModel.class);
     }
 
