@@ -107,3 +107,5 @@ VALUES ('X-Tudo Sandwich', 'Big sandwich with lots of cheese, beef hamburger, ba
 
 INSERT INTO product (name, description, price, active, restaurant_id)
 VALUES ('Beef Hump Skewer', 'Served with flour, cassava, and vinaigrette', 8, 1, 6);
+
+insert into user_group (name) values ('Gerente'), ('Vendedor'), ('Secretária'), ('Cadastrador');
