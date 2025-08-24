@@ -1,8 +1,10 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
 import com.baisebreno.learning_spring_api.core.validation.Groups;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -12,6 +14,7 @@ import javax.validation.groups.ConvertGroup;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+
 @Data
 public class City {
     @EqualsAndHashCode.Include

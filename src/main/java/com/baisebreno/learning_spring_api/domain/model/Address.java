@@ -1,6 +1,9 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
