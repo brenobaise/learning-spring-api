@@ -1,8 +1,10 @@
 package com.baisebreno.learning_spring_api.api.assembler;
 
 import com.baisebreno.learning_spring_api.api.model.input.CityInputModel;
+import com.baisebreno.learning_spring_api.api.model.input.UserInputModel;
 import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.model.GeographicalState;
+import com.baisebreno.learning_spring_api.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,4 +32,9 @@ public class GenericAssembler {
     public <S, T> void copy(S source, T target){
         modelMapper.map(source,target);
     }
+
+    public <S,T> T disassemble(S source, Class<T> target){
+        return toSubject(source,target);
+    }
+
 }
