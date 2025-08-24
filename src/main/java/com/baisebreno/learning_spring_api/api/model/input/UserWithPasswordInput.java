@@ -7,10 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class UserUpdateInputModel {
-
+public class UserWithPasswordInput extends UserInputModel {
     @NotBlank
-    private String name;
-    @NotBlank
-    private String email;
+    private String password;
 }

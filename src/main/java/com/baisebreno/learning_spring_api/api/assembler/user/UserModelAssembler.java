@@ -1,12 +1,8 @@
 package com.baisebreno.learning_spring_api.api.assembler.user;
 
 import com.baisebreno.learning_spring_api.api.assembler.GenericAssembler;
-import com.baisebreno.learning_spring_api.api.model.PaymentMethodModel;
 import com.baisebreno.learning_spring_api.api.model.UserModel;
-import com.baisebreno.learning_spring_api.api.model.input.PaymentMethodInputModel;
 import com.baisebreno.learning_spring_api.api.model.input.UserInputModel;
-import com.baisebreno.learning_spring_api.api.model.input.UserUpdateInputModel;
-import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
 import com.baisebreno.learning_spring_api.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,14 +27,7 @@ public class UserModelAssembler {
         return assembler.toSubject(userInputModel, User.class);
     }
 
-    public void copyToDomainObject(Object inputModel, User user){
-        if(inputModel instanceof UserUpdateInputModel)
-        {
-            assembler.copy((UserUpdateInputModel)inputModel,user);
-        }
-
-        if(inputModel instanceof UserInputModel){
-            assembler.copy((UserInputModel) inputModel, user);
-        }
+    public void copyToDomainObject(UserInputModel inputModel, User user){
+        assembler.copy(inputModel,user);
     }
 }

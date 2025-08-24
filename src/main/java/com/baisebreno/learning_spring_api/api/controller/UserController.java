@@ -2,18 +2,16 @@ package com.baisebreno.learning_spring_api.api.controller;
 
 import com.baisebreno.learning_spring_api.api.assembler.user.UserModelAssembler;
 import com.baisebreno.learning_spring_api.api.model.UserModel;
-import com.baisebreno.learning_spring_api.api.model.input.UserGroupInputModel;
+import com.baisebreno.learning_spring_api.api.model.input.PasswordInput;
 import com.baisebreno.learning_spring_api.api.model.input.UserInputModel;
-import com.baisebreno.learning_spring_api.api.model.input.UserUpdateInputModel;
+import com.baisebreno.learning_spring_api.api.model.input.UserWithPasswordInput;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
-import com.baisebreno.learning_spring_api.domain.exceptions.UserGroupNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.UserNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.User;
 import com.baisebreno.learning_spring_api.domain.repository.UserRepository;
 import com.baisebreno.learning_spring_api.domain.service.UserRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,14 +41,14 @@ public class UserController {
     }
 
     @PostMapping()
-    public UserModel create(@RequestBody UserInputModel inputModel){
+    public UserModel create(@Valid @RequestBody UserWithPasswordInput inputModel){
         User newUser = assembler.disassemble(inputModel);
 
         return assembler.toModel(userService.save(newUser));
     }
 
     @PutMapping("/{id}")
-    public UserModel update(@PathVariable Long id, @Valid @RequestBody UserUpdateInputModel inputModel){
+    public UserModel update(@PathVariable Long id, @Valid @RequestBody UserInputModel inputModel){
         try{
             User foundUser = userService.findOne(id);
             assembler.copyToDomainObject(inputModel,foundUser);
@@ -58,18 +56,13 @@ public class UserController {
         }catch (UserNotFoundException e){
             throw new BusinessException(e.getMessage());
         }
-
-
-
     }
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
-        try{
-            userService.remove(id);
 
-        }catch (EmptyResultDataAccessException e){
-            throw new UserNotFoundException(id);
-        }
+    @PutMapping("/{id}/password")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updatePassword(@PathVariable Long id, @Valid @RequestBody PasswordInput passwordInput){
+        userService.updatePassword(id, passwordInput.getPassword(), passwordInput.getNewPassword());
+
     }
 
 }

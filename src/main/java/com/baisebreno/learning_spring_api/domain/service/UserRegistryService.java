@@ -1,10 +1,12 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
+import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.UserNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.User;
 import com.baisebreno.learning_spring_api.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserRegistryService {
@@ -16,16 +18,25 @@ public class UserRegistryService {
                 () -> new UserNotFoundException(id));
     }
 
+    @Transactional
     public User save(User newUser) {
         return userRepository.save(newUser);
     }
 
-    public void update(Long id){
+    @Transactional
+    public void remove(Long id) {
 
+        userRepository.deleteById(id);
     }
 
+    @Transactional
+    public void updatePassword(Long userId, String currentPassword, String newPassword ){
+        User foundUser = findOne(userId);
 
-    public void remove(Long id) {
-        userRepository.deleteById(id);
+        if(foundUser.notValidPassword(currentPassword)){
+            throw new BusinessException("Incorrect Password");
+        }
+
+        foundUser.setPassword(newPassword);
     }
 }
