@@ -13,7 +13,7 @@ The goal is to document my learning journey in building **Spring RESTful APIs** 
 My future plans are:
 - To add Spring Security.
 - To add another database provider, like Postgresql
-- ~~to add Flyway for database migrations.~~ Implemented.
+- ~~to add Flyway for database migrations.~~ _Implemented_.
 - to add api documentation like Swagger
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
@@ -40,11 +40,14 @@ My future plans are:
 - CRUD operations for:
     - **Restaurants & Kitchens**
     - **States & Cities**
+    - **UserGroups & Permissions**
+    - **Users & Orders**
+    - **Products**
 
 ### 🚧 Upcoming Features
-- Global exception handler with standardized request/response formats
+- ~~Global exception handler with standardized request/response formats~~ _Implemented_
 - Authentication (Spring Security, JWT, OAuth2)
-- Product, Order, Product Photo, Groups, Users, Permissions
+- ~~Product, Order, Product Photo, Groups, Users, Permissions~~ _Implemented_
 - Deployment for public access
 - TESTS !!! 
 
@@ -221,8 +224,8 @@ GET /restaurants
 - [ ] **Authentication & Authorization** – JWT-based authentication with role-based access control
 - [ ] **Pagination, Sorting, Filtering** for all list endpoints
 - [ ] **File Storage Abstraction** – Product photos with local/S3 storage
-- [ ] **DTOs & Validation** – Standardized request/response models with validation
-- [ ] **Database Migrations** – Version-controlled schema changes with Flyway
+- [X] **DTOs & Validation** – Standardized request/response models with validation
+- [X] **Database Migrations** – Version-controlled schema changes with Flyway
 - [ ] **Caching** – For read-heavy endpoints like kitchens/products
 - [ ] **Observability** – Logging, metrics, tracing
 - [ ] **Production Configuration** – Secure, profile-based configurations
