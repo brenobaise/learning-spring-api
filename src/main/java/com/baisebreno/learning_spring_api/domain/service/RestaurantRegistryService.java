@@ -72,7 +72,7 @@ public class RestaurantRegistryService {
     }
 
     /**
-     * Changes the status of a Restaurant to active (true).
+     * Activates the status of a Restaurant
      * @param restaurantId the target id
      */
     @Transactional
@@ -82,7 +82,7 @@ public class RestaurantRegistryService {
     }
 
     /**
-     * Changes the status of a Restaurant to deactivated(false)
+     * Deactivates the status of a restaurant
      * @param restaurantId the target id
      */
     @Transactional
@@ -91,6 +91,11 @@ public class RestaurantRegistryService {
         restaurant.deactivate();
     }
 
+    /**
+     * Removes a type of payment method from the specified restaurant.
+     * @param restaurantId the target id
+     * @param paymentMethodId the payment method id
+     */
     @Transactional
     public void removePaymentMethod(Long restaurantId, Long paymentMethodId){
         Restaurant restaurant = findOne(restaurantId);
@@ -99,6 +104,11 @@ public class RestaurantRegistryService {
         restaurant.removePaymentMethod(paymentMethod);
     }
 
+    /**
+     * Adds a new type of payment method to the specified restaurant.
+     * @param restaurantId the target id
+     * @param paymentMethodId the payment method id
+     */
     @Transactional
     public void addPaymentMethod(Long restaurantId, Long paymentMethodId){
         Restaurant restaurant = findOne(restaurantId);
@@ -107,5 +117,23 @@ public class RestaurantRegistryService {
         restaurant.addPaymentMethod(paymentMethod);
     }
 
+    /**
+     * Fetches a restaurant by id and closes the restaurant for business.
+     * @param restaurantId the target id
+     */
+    @Transactional
+    public void close(Long restaurantId) {
+        Restaurant restaurant = findOne(restaurantId);
+        restaurant.closeRestaurant();
+    }
 
+    /**
+     * Fetches a restaurant by id and opens the restaurant for business.
+     * @param restaurantId the target id
+     */
+    @Transactional
+    public void open(Long restaurantId) {
+        Restaurant restaurant = findOne(restaurantId);
+        restaurant.openRestaurant();
+    }
 }

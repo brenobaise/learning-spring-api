@@ -44,23 +44,23 @@ INSERT INTO city (id, name, state_id) VALUES (4, 'Campinas', 2);
 INSERT INTO city (id, name, state_id) VALUES (5, 'Fortaleza', 3);
 
 -- Restaurants
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, address_city_id, address_postcode, address_street, address_number, address_district, is_active)
-VALUES (1, 'Thai Gourmet', 10, 1, UTC_TIMESTAMP, UTC_TIMESTAMP, 1, '38400-999', 'João Pinheiro Street', '1000', 'Downtown', true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, address_city_id, address_postcode, address_street, address_number, address_district, is_active, is_open)
+VALUES (1, 'Thai Gourmet', 10, 1, UTC_TIMESTAMP, UTC_TIMESTAMP, 1, '38400-999', 'João Pinheiro Street', '1000', 'Downtown', true, true);
 
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active)
-VALUES (2, 'Thai Delivery', 9.50, 1, UTC_TIMESTAMP, UTC_TIMESTAMP, true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active, is_open)
+VALUES (2, 'Thai Delivery', 9.50, 1, UTC_TIMESTAMP, UTC_TIMESTAMP, true, true);
 
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active)
-VALUES (3, 'Tuk Tuk Indian Food', 15, 2, UTC_TIMESTAMP, UTC_TIMESTAMP, true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active, is_open)
+VALUES (3, 'Tuk Tuk Indian Food', 15, 2, UTC_TIMESTAMP, UTC_TIMESTAMP, true, true);
 
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active)
-VALUES (4, 'Java Steakhouse', 12, 3, UTC_TIMESTAMP, UTC_TIMESTAMP, true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active, is_open)
+VALUES (4, 'Java Steakhouse', 12, 3, UTC_TIMESTAMP, UTC_TIMESTAMP, true, true);
 
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active)
-VALUES (5, 'Uncle Sam Snack Bar', 11, 4, UTC_TIMESTAMP, UTC_TIMESTAMP, true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active, is_open)
+VALUES (5, 'Uncle Sam Snack Bar', 11, 4, UTC_TIMESTAMP, UTC_TIMESTAMP, true, true);
 
-INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active)
-VALUES (6, 'Maria’s Bar', 6, 4, UTC_TIMESTAMP, UTC_TIMESTAMP, true);
+INSERT INTO restaurant (id, name, delivery_fee, kitchen_id, registered_date, last_updated_date, is_active, is_open)
+VALUES (6, 'Maria’s Bar', 6, 4, UTC_TIMESTAMP, UTC_TIMESTAMP, true, true);
 
 -- Payment Methods
 INSERT INTO payment_method (id, description) VALUES (1, 'Credit card');

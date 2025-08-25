@@ -44,6 +44,9 @@ public class Restaurant {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Column(name = "is_open")
+    private Boolean isOpen = true;
+
     @CreationTimestamp()
     @Column(nullable = false, columnDefinition = "datetime")
     private OffsetDateTime registeredDate;
@@ -82,5 +85,13 @@ public class Restaurant {
 
     public void addPaymentMethod(PaymentMethod paymentMethod){
         getPaymentMethods().add(paymentMethod);
+    }
+
+    public void openRestaurant(){
+        setIsOpen(true);
+    }
+
+    public void closeRestaurant(){
+        setIsOpen(false);
     }
 }
