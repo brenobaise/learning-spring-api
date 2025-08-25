@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class UserGroup {
+public class Group {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

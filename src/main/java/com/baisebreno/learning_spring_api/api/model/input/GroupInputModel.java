@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class UserGroupInputModel {
+public class GroupInputModel {
 
     @NotBlank
     private String name;

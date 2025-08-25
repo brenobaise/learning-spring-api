@@ -1,33 +1,29 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
-import com.baisebreno.learning_spring_api.domain.exceptions.UserGroupNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
+import com.baisebreno.learning_spring_api.domain.exceptions.GroupNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Permission;
-import com.baisebreno.learning_spring_api.domain.model.Restaurant;
-import com.baisebreno.learning_spring_api.domain.model.UserGroup;
-import com.baisebreno.learning_spring_api.domain.repository.UserGroupsRepository;
+import com.baisebreno.learning_spring_api.domain.model.Group;
+import com.baisebreno.learning_spring_api.domain.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class UserGroupRegistryService {
+public class GroupRegistryService {
     @Autowired
-    UserGroupsRepository repository;
+    GroupRepository repository;
 
     @Autowired
     PermissionRegistryService permissionRegistryService;
 
-    public UserGroup findOne(Long groupId) {
+    public Group findOne(Long groupId) {
         return  repository.findById(groupId)
                 .orElseThrow(() ->
-                    new UserGroupNotFoundException(groupId));
+                    new GroupNotFoundException(groupId));
     }
     @Transactional
     public void addPermissionToGroup(Long groupId, Long permissionId) {
-        UserGroup group = findOne(groupId);
+        Group group = findOne(groupId);
 
         Permission permission = permissionRegistryService.findOne(permissionId);
 
@@ -36,7 +32,7 @@ public class UserGroupRegistryService {
 
     @Transactional
     public void removePermissionFromGroup(Long groupId, Long permissionId) {
-        UserGroup group = findOne(groupId);
+        Group group = findOne(groupId);
 
         Permission permission = permissionRegistryService.findOne(permissionId);
 

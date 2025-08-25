@@ -35,7 +35,7 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_user_groups", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "user_group_id"))
-    private List<UserGroup> groups;
+    private List<Group> groups;
 
     public boolean validPassword(String currentPassword){
         return  getPassword().equals(currentPassword);

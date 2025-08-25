@@ -3,11 +3,9 @@ package com.baisebreno.learning_spring_api.api.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @Setter
-public class UserGroupModel {
+public class GroupModel {
 
     private Long id;
 
