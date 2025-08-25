@@ -25,4 +25,12 @@ public class UserGroup {
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     @ManyToMany
     private List<Permission> permissions = new ArrayList<>();
+
+    public void removePermission(Permission permission){
+        getPermissions().remove(permission);
+    }
+
+    public void addPermission(Permission permission){
+        getPermissions().add(permission);
+    }
 }
