@@ -4,7 +4,7 @@ import com.baisebreno.learning_spring_api.api.assembler.permission.PermissionMod
 import com.baisebreno.learning_spring_api.api.model.PermissionModel;
 import com.baisebreno.learning_spring_api.domain.model.Group;
 import com.baisebreno.learning_spring_api.domain.service.PermissionRegistryService;
-import com.baisebreno.learning_spring_api.domain.service.GroupRegistryService;
+import com.baisebreno.learning_spring_api.domain.service.GroupPermissionRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ public class GroupPermissionController {
     PermissionRegistryService permissionService;
 
     @Autowired
-    GroupRegistryService groupRegistryService;
+    GroupPermissionRegistryService groupPermissionRegistryService;
 
     @Autowired
     PermissionModelAssembler assembler;
@@ -26,19 +26,19 @@ public class GroupPermissionController {
 
     @GetMapping
     public List<PermissionModel> getAllPermissions(@PathVariable Long groupId){
-        Group group = groupRegistryService.findOne(groupId);
+        Group group = groupPermissionRegistryService.findOne(groupId);
         return assembler.toCollectionModel(group.getPermissions());
     }
 
     @PutMapping("/{permissionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addPermission(@PathVariable Long groupId, @PathVariable Long permissionId){
-        groupRegistryService.addPermissionToGroup(groupId,permissionId);
+        groupPermissionRegistryService.addPermissionToGroup(groupId,permissionId);
     }
 
     @DeleteMapping("/{permissionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removePermission(@PathVariable Long groupId, @PathVariable Long permissionId){
-        groupRegistryService.removePermissionFromGroup(groupId,permissionId);
+        groupPermissionRegistryService.removePermissionFromGroup(groupId,permissionId);
     }
 }

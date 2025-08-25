@@ -64,7 +64,11 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     private List<Product> products = new ArrayList<>();
 
-
+    @JoinTable(name = "restaurant_user_responsible",
+    joinColumns = @JoinColumn(name= "restaurant_id"),
+    inverseJoinColumns = @JoinColumn(name = "users_id"))
+    @ManyToMany
+    private Set<User> responsibleUsers = new HashSet<>();
     /**
      * Activates this restaurant instance.
      */
@@ -79,18 +83,32 @@ public class Restaurant {
         setIsActive(false);
     }
 
+    /**
+     * Removes a payment method to this instance.
+     * @param paymentMethod The type of payment method to be removed.
+     */
     public void removePaymentMethod(PaymentMethod paymentMethod){
         getPaymentMethods().remove(paymentMethod);
     }
 
+    /**
+     * Adds a payment method to this instance.
+     * @param paymentMethod The type of payment method to be added.
+     */
     public void addPaymentMethod(PaymentMethod paymentMethod){
         getPaymentMethods().add(paymentMethod);
     }
 
+    /**
+     * Opens the restaurant. Set the isOpen flag to true.
+     */
     public void openRestaurant(){
         setIsOpen(true);
     }
 
+    /**
+     * Closes the restaurant. Sets the isOpen flag to false.
+     */
     public void closeRestaurant(){
         setIsOpen(false);
     }

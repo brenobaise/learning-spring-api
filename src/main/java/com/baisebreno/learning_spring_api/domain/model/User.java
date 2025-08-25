@@ -6,7 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -35,7 +36,7 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_user_groups", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "user_group_id"))
-    private List<Group> groups;
+    private Set<Group> groups = new HashSet<>();
 
     public boolean validPassword(String currentPassword){
         return  getPassword().equals(currentPassword);
@@ -43,5 +44,13 @@ public class User {
 
     public boolean notValidPassword(String currentPassword){
         return !validPassword(currentPassword);
+    }
+
+    public void addToGroup(Group group){
+        getGroups().add(group);
+    }
+
+    public void removeFromGroup(Group group){
+        getGroups().remove(group);
     }
 }

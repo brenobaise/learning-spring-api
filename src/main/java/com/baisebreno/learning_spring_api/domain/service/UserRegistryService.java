@@ -2,6 +2,7 @@ package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.UserNotFoundException;
+import com.baisebreno.learning_spring_api.domain.model.Group;
 import com.baisebreno.learning_spring_api.domain.model.User;
 import com.baisebreno.learning_spring_api.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import java.util.Optional;
 public class UserRegistryService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    GroupRegistryService groupRegistryService;
 
     public User findOne(Long id){
         return userRepository.findById(id).orElseThrow(
@@ -50,5 +53,33 @@ public class UserRegistryService {
         }
 
         foundUser.setPassword(newPassword);
+    }
+
+    /**
+     * Adds a {@link User} to a {@link Group}.
+     * @param userId the user id.
+     * @param groupId the target group id
+     */
+    @Transactional
+    public void addToGroup(Long userId, Long groupId){
+        User user =  findOne(userId);
+        Group group = groupRegistryService.findOne(groupId);
+
+        user.addToGroup(group);
+
+    }
+
+    /**
+     * Removes a {@link User} from a {@link Group}.
+     * @param userId the user id.
+     * @param groupId the target group id
+     */
+    @Transactional
+    public void removeFromGroup(Long userId, Long groupId){
+        User user =  findOne(userId);
+        Group group = groupRegistryService.findOne(groupId);
+
+        user.removeFromGroup(group);
+
     }
 }

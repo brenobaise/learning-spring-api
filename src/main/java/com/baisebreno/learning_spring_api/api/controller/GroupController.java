@@ -7,7 +7,7 @@ import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.GroupNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Group;
 import com.baisebreno.learning_spring_api.domain.repository.GroupRepository;
-import com.baisebreno.learning_spring_api.domain.service.GroupService;
+import com.baisebreno.learning_spring_api.domain.service.GroupRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class GroupController {
     @Autowired
     GroupRepository repository;
     @Autowired
-    GroupService groupService;
+    GroupRegistryService groupService;
 
     @Autowired
     GroupModelAssembler modelAssembler;

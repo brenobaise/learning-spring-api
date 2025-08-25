@@ -7,6 +7,7 @@ import com.baisebreno.learning_spring_api.domain.model.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -21,7 +22,7 @@ public class GroupModelAssembler {
         return assembler.toSubject(group, GroupModel.class);
     }
 
-    public List<GroupModel> toCollectionModel(List<Group> all) {
+    public List<GroupModel> toCollectionModel(Collection<Group> all) {
         return all.stream()
                 .map(this::toModel)
                 .collect(toList());

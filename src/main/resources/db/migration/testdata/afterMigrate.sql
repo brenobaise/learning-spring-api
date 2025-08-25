@@ -118,3 +118,5 @@ insert into users (id, name, email, password, registered_date) values
 
 
 insert into user_group_permissions (user_group_id, permission_id) values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1);
+
+insert into user_user_groups (user_id, user_group_id) values (1, 1), (1, 2), (2, 2)
