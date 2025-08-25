@@ -34,5 +34,7 @@ public interface RestaurantRepository extends
 
     int countByKitchenId(Long id);
 
+    List<Restaurant> findAllByIsActive(boolean isActive);
+
 
 }

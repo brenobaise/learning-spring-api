@@ -67,6 +67,7 @@ public class Restaurant {
     @JoinTable(name = "restaurant_user_responsible",
     joinColumns = @JoinColumn(name= "restaurant_id"),
     inverseJoinColumns = @JoinColumn(name = "users_id"))
+
     @ManyToMany
     private Set<User> responsibleUsers = new HashSet<>();
     /**

@@ -218,7 +218,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
         String detail = "The request body is invalid. Please check the JSON syntax.";
 
-        Problem problem = createProblemBuilder(status, problemType, detail, ex.getMessage(), OffsetDateTime.now())
+        Problem problem = createProblemBuilder(status, problemType, detail, INTERNAL_SERVER_ERROR_MESSAGE, OffsetDateTime.now())
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
