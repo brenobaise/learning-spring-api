@@ -3,13 +3,10 @@ package com.baisebreno.learning_spring_api.api.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-
 @Getter
 @Setter
-public class UserModel {
+public class RestaurantSummaryModel {
 
     private Long id;
     private String name;
-    private String email;
 }
