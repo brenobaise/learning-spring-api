@@ -2,10 +2,7 @@ package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityInUseException;
 import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundException;
-import com.baisebreno.learning_spring_api.domain.model.City;
-import com.baisebreno.learning_spring_api.domain.model.Kitchen;
-import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
-import com.baisebreno.learning_spring_api.domain.model.Restaurant;
+import com.baisebreno.learning_spring_api.domain.model.*;
 import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,9 @@ public class RestaurantRegistryService {
 
     @Autowired
     PaymentMethodService paymentMethodService;
+
+    @Autowired
+    UserRegistryService userRegistryService;
 
     public static final String MESSAGE_RESTAURANT_IN_USE = "Restaurant of id %d cannot be removed, it's being used.";
 
@@ -135,5 +135,31 @@ public class RestaurantRegistryService {
     public void open(Long restaurantId) {
         Restaurant restaurant = findOne(restaurantId);
         restaurant.openRestaurant();
+    }
+
+    /**
+     * Fetches a restaurant and a user, adds the user as a responsible for the restaurant.
+     * @param restaurantId the restaurant id
+     * @param userId the user id
+     */
+    @Transactional
+    public void addUserToRestaurant(Long restaurantId, Long userId) {
+        Restaurant restaurant = findOne(restaurantId);
+        User user = userRegistryService.findOne(userId);
+
+        restaurant.addResponsibleUser(user);
+    }
+
+    /**
+     * Fetches a restaurant and a user, removes the user as a responsible for the restaurant.
+     * @param restaurantId the restaurant id
+     * @param userId the user id
+     */
+    @Transactional
+    public void removeUserFromRestaurant(Long restaurantId, Long userId) {
+        Restaurant restaurant = findOne(restaurantId);
+        User user = userRegistryService.findOne(userId);
+
+        restaurant.removeResponsibleUser(user);
     }
 }

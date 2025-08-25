@@ -112,4 +112,20 @@ public class Restaurant {
     public void closeRestaurant(){
         setIsOpen(false);
     }
+
+    /**
+     * Adds a User as a responsible person to this restaurant.
+     * @param user The {@link User} desired user to be added.
+     */
+    public void addResponsibleUser(User user) {
+        getResponsibleUsers().add(user);
+    }
+
+    /**
+     * Removes a user as a responsible person to this restaurant.
+     * @param user The {@link User} desired user to be removed.
+     */
+    public void removeResponsibleUser(User user) {
+        getResponsibleUsers().remove(user);
+    }
 }

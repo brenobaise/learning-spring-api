@@ -12,6 +12,7 @@ DELETE FROM restaurant;
 DELETE FROM restaurant_payment_method;
 DELETE FROM users;
 DELETE FROM user_user_groups;
+DELETE FROM restaurant_user_responsible;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -119,4 +120,9 @@ insert into users (id, name, email, password, registered_date) values
 
 insert into user_group_permissions (user_group_id, permission_id) values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1);
 
-insert into user_user_groups (user_id, user_group_id) values (1, 1), (1, 2), (2, 2)
+insert into user_user_groups (user_id, user_group_id) values (1, 1), (1, 2), (2, 2);
+
+insert into users (id, name, email, password, registered_date) values
+    (5, 'Manoel Lima', 'manoel.loja@gmail.com', '123', utc_timestamp);
+
+insert into restaurant_user_responsible (restaurant_id, users_id) values (1, 5), (3, 5);

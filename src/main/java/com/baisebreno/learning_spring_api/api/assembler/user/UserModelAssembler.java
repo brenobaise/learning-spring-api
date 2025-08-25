@@ -7,6 +7,7 @@ import com.baisebreno.learning_spring_api.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -19,7 +20,7 @@ public class UserModelAssembler {
         return assembler.toSubject(user, UserModel.class);
     }
 
-    public List<UserModel> toCollectionModel(List<User> users){
+    public List<UserModel> toCollectionModel(Collection<User> users){
         return assembler.toCollectionModel(users,UserModel.class);
     }
 
