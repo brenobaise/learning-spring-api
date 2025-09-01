@@ -17,20 +17,20 @@ public class OrderStatusService {
     FireOrderService orderService;
 
     @Transactional
-    public void confirm(Long orderId){
-        Order order = orderService.findOne(orderId);
+    public void confirm(String orderCode){
+        Order order = orderService.findOne(orderCode);
         order.confirm();
 
     }
 
     @Transactional
-    public void deliver(Long orderId) {
-        Order order = orderService.findOne(orderId);
+    public void deliver(String orderCode) {
+        Order order = orderService.findOne(orderCode);
         order.deliver();
     }
 
     @Transactional
-    public void cancel(Long orderId) {
+    public void cancel(String orderId) {
         Order order = orderService.findOne(orderId);
 
         order.cancel();

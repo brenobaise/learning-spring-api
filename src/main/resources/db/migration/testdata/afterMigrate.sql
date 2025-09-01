@@ -132,10 +132,10 @@ insert into users (id, name, email, password, registered_date) values
 insert into restaurant_user_responsible (restaurant_id, users_id) values (1, 5), (3, 5);
 
 
-insert into orders (id, restaurant_id,user_customer_id, payment_method_id, address_city_id, address_postcode,
+insert into orders (id, order_code, restaurant_id,user_customer_id, payment_method_id, address_city_id, address_postcode,
                     address_street, address_number, address_district,
                     status, created_date, subtotal, delivery_fee, total)
-values (1, 1, 1, 1, 1, '38400-000', 'Rua Floriano Peixoto', '500', 'Apto 801',
+values (1,"50caa5cf-37ec-4707-86d4-9b4c91e01db1", 1, 1, 1, 1, '38400-000', 'Rua Floriano Peixoto', '500', 'Apto 801',
         'CREATED', utc_timestamp, 298.90, 10, 308.90);
 
 insert into order_item (id, order_id, product_id, quantity, unit_price, total, notes)
@@ -145,10 +145,10 @@ insert into order_item (id, order_id, product_id, quantity, unit_price, total, n
 values (2, 1, 2, 2, 110, 220, 'Menos picante, por favor');
 
 
-insert into orders (id, restaurant_id,user_customer_id, payment_method_id, address_city_id, address_postcode,
+insert into orders (id, order_code, restaurant_id,user_customer_id, payment_method_id, address_city_id, address_postcode,
                     address_street, address_number, address_district,
                     status, created_date, subtotal, delivery_fee, total)
-values (2, 4, 1, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2',
+values (2, "790a22b2-4592-461b-9a77-5bc673c7e127",4, 1, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2',
         'CREATED', utc_timestamp, 79, 0, 79);
 
 insert into order_item (id, order_id, product_id, quantity, unit_price, total, notes)

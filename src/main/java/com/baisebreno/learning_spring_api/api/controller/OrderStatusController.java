@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/orders/{orderId}")
+@RequestMapping("/orders/{orderCode}")
 public class OrderStatusController {
 
     @Autowired
@@ -14,20 +14,20 @@ public class OrderStatusController {
 
     @PutMapping("/confirmation")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void confirm(@PathVariable Long orderId){
-        orderStatusService.confirm(orderId);
+    public void confirm(@PathVariable String orderCode){
+        orderStatusService.confirm(orderCode);
     }
 
     @PutMapping("/deliver")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deliver(@PathVariable Long orderId){
-        orderStatusService.deliver(orderId);
+    public void deliver(@PathVariable String orderCode){
+        orderStatusService.deliver(orderCode);
     }
 
     @PutMapping("/cancellation")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancel(@PathVariable Long orderId){
-        orderStatusService.cancel(orderId);
+    public void cancel(@PathVariable String orderCode){
+        orderStatusService.cancel(orderCode);
     }
 
     /*

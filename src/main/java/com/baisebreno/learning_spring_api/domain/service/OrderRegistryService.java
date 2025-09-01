@@ -17,9 +17,9 @@ public class OrderRegistryService {
     OrderRepository orderRepository;
 
 
-    public Order findOne(Long orderId){
-        return  orderRepository.findById(orderId)
-                .orElseThrow(() ->  new OrderNotFoundException(orderId));
+    public Order findOne(String orderCode){
+        return  orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() ->  new OrderNotFoundException(orderCode));
     }
 
     public List<Order> getAll(){

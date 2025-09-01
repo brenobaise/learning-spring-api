@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Represents an Order entity inside the database.
@@ -24,6 +25,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
+
+    @Column(name = "order_code")
+    private String orderCode;
 
     @Column(name = "subtotal")
     private BigDecimal subTotal;
@@ -90,8 +94,8 @@ public class Order {
 
         if(getStatus().cannotChangeTo(newStatus)){
             throw  new BusinessException(
-                    String.format("Status of Order %d , cannot be changed from %s to %s",
-                            getId(),
+                    String.format("Status of Order %s , cannot be changed from %s to %s",
+                            getOrderCode(),
                             getStatus().getDescription(),
                             newStatus.getDescription())
             );
@@ -102,14 +106,10 @@ public class Order {
 
     }
 
-    public void defineDeliveryRate() {
-        setDeliveryRate(getRestaurant().getDeliveryRate());
+    @PrePersist // before saving a new entity, do this first
+    private void generateUUID(){
+        setOrderCode(UUID.randomUUID().toString());
     }
-
-    public void mapOrderToItems() {
-        getItems().forEach(item -> item.setOrder(this));
-    }
-
 
     @Override
     public String toString() {

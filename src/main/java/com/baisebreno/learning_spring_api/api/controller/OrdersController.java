@@ -41,19 +41,14 @@ public class OrdersController {
         return orderSummaryModel.toCollectionModel(orderRegistryService.getAll());
 
     }
-    @GetMapping("/{orderId}")
-    public OrderModel find(@PathVariable Long orderId){
-        return orderModelAssembler.toModel(orderRegistryService.findOne(orderId));
+    @GetMapping("/{orderCode}")
+    public OrderModel find(@PathVariable String orderCode){
+        return orderModelAssembler.toModel(orderRegistryService.findOne(orderCode));
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public OrderModel newOrder(@Valid @RequestBody OrderInput orderInput){
-        System.out.println("================================================================================");
-        System.out.println("================================================================================");
-
-        System.out.println(orderInput.toString());
-
         try{
             Order newOrder = orderInputAssembler.toDomain(orderInput);
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class OrderSummaryModel {
 
-    private Long id;
+    private Long orderCode;
     private BigDecimal subTotal;
     private BigDecimal deliveryRate;
     private BigDecimal total;

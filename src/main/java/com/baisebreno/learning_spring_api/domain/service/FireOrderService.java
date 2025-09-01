@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FireOrderService {
-    @Autowired
-    RestaurantRepository restaurantRepository;
 
     @Autowired
     OrderRepository orderRepository;
@@ -75,9 +73,9 @@ public class FireOrderService {
         });
     }
 
-    public Order findOne(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow( () -> new OrderNotFoundException(orderId));
+    public Order findOne(String orderCode) {
+        return orderRepository.findByOrderCode(orderCode)
+                .orElseThrow( () -> new OrderNotFoundException(orderCode));
 
     }
 }
