@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.domain.model;
 
+import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -64,10 +65,41 @@ public class Order {
         getItems().forEach(OrderItem::calculateTotalPrice);
 
         this.subTotal = getItems().stream()
-                .map(item -> item.getTotal())
+                .map(OrderItem::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.total = this.subTotal.add(this.deliveryRate);
+    }
+
+    public void confirm(){
+        setStatus(OrderStatus.CONFIRMED);
+        setConfirmedDate(OffsetDateTime.now());
+    }
+
+    public void cancel(){
+        setStatus(OrderStatus.CANCELLED);
+        setCancelledDate(OffsetDateTime.now());
+    }
+
+    public void deliver(){
+        setStatus(OrderStatus.DELIVERED);
+        setDeliveredDate(OffsetDateTime.now());
+    }
+
+    private void setStatus(OrderStatus newStatus){
+
+        if(getStatus().cannotChangeTo(newStatus)){
+            throw  new BusinessException(
+                    String.format("Status of Order %d , cannot be changed from %s to %s",
+                            getId(),
+                            getStatus().getDescription(),
+                            newStatus.getDescription())
+            );
+        }
+
+        this.status = newStatus;
+
+
     }
 
     public void defineDeliveryRate() {

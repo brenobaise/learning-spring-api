@@ -1,6 +1,7 @@
 package com.baisebreno.learning_spring_api.domain.service;
 
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
+import com.baisebreno.learning_spring_api.domain.exceptions.OrderNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.*;
 import com.baisebreno.learning_spring_api.domain.repository.OrderRepository;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
@@ -72,5 +73,11 @@ public class FireOrderService {
             orderItem.setProduct(product);
             orderItem.setUnitPrice(product.getPrice());
         });
+    }
+
+    public Order findOne(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow( () -> new OrderNotFoundException(orderId));
+
     }
 }
