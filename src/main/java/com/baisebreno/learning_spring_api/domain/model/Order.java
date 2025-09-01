@@ -51,7 +51,7 @@ public class Order {
     @JoinColumn(name = "user_customer_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
 
     @Embedded
@@ -60,9 +60,11 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.CREATED;
 
-    public void calculateTotalPrice() {
+    public void calculateTotal() {
+        getItems().forEach(OrderItem::calculateTotalPrice);
+
         this.subTotal = getItems().stream()
-                .map(OrderItem::getTotal)
+                .map(item -> item.getTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.total = this.subTotal.add(this.deliveryRate);
@@ -74,5 +76,26 @@ public class Order {
 
     public void mapOrderToItems() {
         getItems().forEach(item -> item.setOrder(this));
+    }
+
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", subTotal=" + subTotal +
+                ", deliveryRate=" + deliveryRate +
+                ", total=" + total +
+                ", createdDate=" + createdDate +
+                ", confirmedDate=" + confirmedDate +
+                ", cancelledDate=" + cancelledDate +
+                ", deliveredDate=" + deliveredDate +
+                ", paymentMethod=" + paymentMethod +
+                ", restaurant=" + restaurant +
+                ", user=" + user +
+                ", items=" + items +
+                ", deliveryAddress=" + deliveryAddress +
+                ", status=" + status +
+                '}';
     }
 }

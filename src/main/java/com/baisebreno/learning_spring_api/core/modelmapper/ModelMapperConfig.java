@@ -1,7 +1,9 @@
 package com.baisebreno.learning_spring_api.core.modelmapper;
 
 import com.baisebreno.learning_spring_api.api.model.AddressModel;
+import com.baisebreno.learning_spring_api.api.model.input.OrderInput;
 import com.baisebreno.learning_spring_api.domain.model.Address;
+import com.baisebreno.learning_spring_api.domain.model.OrderItem;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,8 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper(){
         var modelMapper  =   new ModelMapper();
 
+        modelMapper.createTypeMap(OrderInput.class, OrderItem.class)
+                .addMappings(mapper -> mapper.skip(OrderItem::setId));
         var addressToAddressModelTypeMap = modelMapper.createTypeMap(
                 Address.class, AddressModel.class);
 

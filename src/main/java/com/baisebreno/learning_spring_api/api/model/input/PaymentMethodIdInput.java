@@ -9,7 +9,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-public class CityIdInput {
+public class PaymentMethodIdInput {
+
     @NotNull
     private Long id;
 }
