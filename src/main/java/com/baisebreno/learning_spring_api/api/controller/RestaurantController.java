@@ -5,6 +5,7 @@ import com.baisebreno.learning_spring_api.api.assembler.restaurant.RestaurantMod
 import com.baisebreno.learning_spring_api.api.model.PaymentMethodModel;
 import com.baisebreno.learning_spring_api.api.model.RestaurantModel;
 import com.baisebreno.learning_spring_api.api.model.input.RestaurantInputModel;
+import com.baisebreno.learning_spring_api.api.model.view.RestaurantView;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.CityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.KitchenNotFoundException;
@@ -12,6 +13,7 @@ import com.baisebreno.learning_spring_api.domain.exceptions.RestaurantNotFoundEx
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import com.baisebreno.learning_spring_api.domain.repository.RestaurantRepository;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,8 +44,18 @@ public class RestaurantController {
      */
     @GetMapping
     public List<RestaurantModel> getAll() {
-
         return restaurantModelAssembler.toCollectionModel(restaurantRepository.findAll());
+    }
+
+    /**
+     * Utilises getAll controller to fetch all restaurants, but returns a different projection of the RestaurantModel
+     *
+     * @return a projection of the RestaurantModel, annotated with @JsonView(RestaurantView.Summary.class)
+     */
+    @JsonView(RestaurantView.Summary.class)
+    @GetMapping(params = "projections=summary")
+    public List<RestaurantModel> getAllSummary() {
+        return getAll();
     }
 
     /**
