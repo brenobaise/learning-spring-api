@@ -10,8 +10,11 @@ import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Order;
 import com.baisebreno.learning_spring_api.domain.model.User;
+import com.baisebreno.learning_spring_api.domain.repository.OrderRepository;
+import com.baisebreno.learning_spring_api.domain.repository.filter.OrderFilter;
 import com.baisebreno.learning_spring_api.domain.service.FireOrderService;
 import com.baisebreno.learning_spring_api.domain.service.OrderRegistryService;
+import com.baisebreno.learning_spring_api.infrastructure.repository.spec.OrderSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +39,15 @@ public class OrdersController {
     @Autowired
     FireOrderService orderService;
 
+    @Autowired
+    OrderRepository orderRepository;
+
     @GetMapping
-    public List<OrderSummaryModel> getAllOrders(){
-        return orderSummaryModel.toCollectionModel(orderRegistryService.getAll());
+    public List<OrderSummaryModel> search(OrderFilter orderFilter){
+        return orderSummaryModel.toCollectionModel(orderRepository.findAll(OrderSpecs.withFilter(orderFilter)));
 
     }
+
     @GetMapping("/{orderCode}")
     public OrderModel find(@PathVariable String orderCode){
         return orderModelAssembler.toModel(orderRegistryService.findOne(orderCode));
