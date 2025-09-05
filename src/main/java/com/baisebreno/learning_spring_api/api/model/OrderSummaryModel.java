@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Setter
 public class OrderSummaryModel {
 
-    private Long orderCode;
+    private String orderCode;
     private BigDecimal subTotal;
     private BigDecimal deliveryRate;
     private BigDecimal total;

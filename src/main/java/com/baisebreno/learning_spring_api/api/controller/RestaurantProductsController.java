@@ -5,9 +5,9 @@ import com.baisebreno.learning_spring_api.api.model.ProductModel;
 import com.baisebreno.learning_spring_api.api.model.input.ProductInputModel;
 import com.baisebreno.learning_spring_api.domain.model.Product;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
+import com.baisebreno.learning_spring_api.domain.repository.ProductRepository;
 import com.baisebreno.learning_spring_api.domain.service.ProductRegistryService;
 import com.baisebreno.learning_spring_api.domain.service.RestaurantRegistryService;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/restaurants/{restaurantId}/products")
-public class RestaurantProducts {
+public class RestaurantProductsController {
     @Autowired
     RestaurantRegistryService restaurantRegistryService;
 
@@ -27,18 +27,29 @@ public class RestaurantProducts {
     @Autowired
     ProductRegistryService productRegistryService;
 
-
+    @Autowired
+    ProductRepository productRepository;
 
     @GetMapping()
-    public List<ProductModel> getAllProducts(@PathVariable Long restaurantId){
+    public List<ProductModel> getAll(@PathVariable Long restaurantId,
+                                     @RequestParam(required = false) boolean includeInactive){
+
         Restaurant foundRestaurant = restaurantRegistryService.findOne(restaurantId);
-        return assembler.toCollectionModel(foundRestaurant.getProducts());
+        List<Product> allProducts = null;
+
+        if(includeInactive){
+            allProducts = productRepository.findAllByRestaurant(foundRestaurant);
+
+        }else {
+            allProducts = productRepository.findActiveByRestaurant(foundRestaurant);
+        }
+        return assembler.toCollectionModel(allProducts);
 
     }
 
     @GetMapping("/{productId}")
     @ResponseStatus(value = HttpStatus.OK)
-    public ProductModel getOneProduct(@PathVariable Long restaurantId, @PathVariable Long productId){
+    public ProductModel findOne(@PathVariable Long restaurantId, @PathVariable Long productId){
         Product foundProduct = productRegistryService.findOne(restaurantId,productId);
 
         return assembler.toModel(foundProduct);

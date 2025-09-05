@@ -93,7 +93,7 @@ INSERT INTO product (name, description, price, active, restaurant_id)
 VALUES ('Thai Shrimp', '16 large shrimps in a spicy sauce', 110, 1, 1);
 
 INSERT INTO product (name, description, price, active, restaurant_id)
-VALUES ('Spicy Salad with Grilled Beef', 'Leaf salad with thin slices of grilled beef and our special red chili sauce', 87.20, 1, 2);
+VALUES ('Spicy Salad with Grilled Beef', 'Leaf salad with thin slices of grilled beef and our special red chili sauce', 87.20, false, 2);
 
 INSERT INTO product (name, description, price, active, restaurant_id)
 VALUES ('Garlic Naan', 'Traditional Indian bread topped with garlic', 21, 1, 3);

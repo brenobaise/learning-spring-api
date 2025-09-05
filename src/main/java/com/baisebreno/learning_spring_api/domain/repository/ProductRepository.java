@@ -1,6 +1,5 @@
 package com.baisebreno.learning_spring_api.domain.repository;
 
-import com.baisebreno.learning_spring_api.domain.model.Permission;
 import com.baisebreno.learning_spring_api.domain.model.Product;
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +16,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("from Product where restaurant.id = :restaurant and id = :product")
     Optional<Product> findById(@Param("restaurant") Long restaurantId, @Param("product")Long productId);
 
-    List<Product> findByRestaurant(Restaurant restaurant);
+    List<Product> findAllByRestaurant(Restaurant restaurant);
+
+    @Query("from Product p where p.active = true and p.restaurant = :restaurant ")
+    List<Product> findActiveByRestaurant(Restaurant restaurant);
 }
