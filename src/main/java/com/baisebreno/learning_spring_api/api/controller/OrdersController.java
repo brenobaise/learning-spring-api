@@ -53,8 +53,6 @@ public class OrdersController {
         List<OrderSummaryModel> summaryModels = summaryModelAssembler.toCollectionModel(orderPage.getContent());
 
         return new PageImpl<>(summaryModels, pageable, orderPage.getTotalElements());
-
-
     }
 
     @GetMapping("/{orderCode}")

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javax.persistence.criteria.Predicate;
 
 public class OrderSpecs {
-
     public static Specification<Order> withFilter(OrderFilter orderFilter) {
         return (root, query, criteriaBuilder) -> {
             if(Order.class.equals(query.getResultType())){

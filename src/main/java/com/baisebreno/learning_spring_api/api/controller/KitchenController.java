@@ -46,8 +46,7 @@ public class KitchenController {
         List<KitchenModel> kitchensModel = kitchenModelAssembler
                 .toCollectionModel(kitchensPage.getContent());
 
-        Page<KitchenModel> kitchenModelsPage = new PageImpl<>(kitchensModel, pageable, kitchensPage.getTotalElements());
-         return kitchenModelsPage;
+        return new PageImpl<>(kitchensModel, pageable, kitchensPage.getTotalElements());
     }
 
 
