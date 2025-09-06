@@ -33,6 +33,16 @@ public class OrderSpecs {
                         orderFilter.getEndingCreatedDate()));
             }
 
+            if(orderFilter.getTotal() != null){
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("total"),
+                        orderFilter.getTotal()));
+            }
+
+            if(orderFilter.getDeliveryRate() != null){
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("deliveryRate"),
+                        orderFilter.getDeliveryRate()));
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }

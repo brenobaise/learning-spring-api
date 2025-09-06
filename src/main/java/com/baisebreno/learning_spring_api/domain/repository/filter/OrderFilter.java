@@ -1,5 +1,6 @@
 package com.baisebreno.learning_spring_api.domain.repository.filter;
 
+import com.baisebreno.learning_spring_api.domain.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,4 +16,7 @@ public class OrderFilter {
     private OffsetDateTime initialCreatedDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private OffsetDateTime endingCreatedDate;
+
+    private Long deliveryRate;
+    private Long total;
 }
