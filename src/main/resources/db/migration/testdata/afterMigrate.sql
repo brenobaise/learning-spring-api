@@ -151,5 +151,11 @@ insert into orders (id, order_code, restaurant_id,user_customer_id, payment_meth
 values (2, "790a22b2-4592-461b-9a77-5bc673c7e127",4, 1, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2',
         'CREATED', utc_timestamp, 79, 0, 79);
 
+insert into orders (id, order_code, restaurant_id,user_customer_id, payment_method_id, address_city_id, address_postcode,
+                    address_street, address_number, address_district,
+                    status, created_date, subtotal, delivery_fee, total)
+values (10, "22f4bb27-fbb4-418c-995f-c21ede5b4366",4, 4, 2, 1, '38400-111', 'Rua Acre', '300', 'Casa 2',
+        'CREATED', utc_timestamp, 5.50, 10, 100);
+
 insert into order_item (id, order_id, product_id, quantity, unit_price, total, notes)
 values (3, 2, 6, 1, 79, 79, 'Ao ponto');

@@ -22,3 +22,5 @@ public class OrderSummaryModel {
     private RestaurantSummaryModel restaurant;
     private UserModel user;
 }
+
+

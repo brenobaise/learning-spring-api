@@ -3,10 +3,10 @@ package com.baisebreno.learning_spring_api.api.controller;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderInputAssembler;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderModelAssembler;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderSummaryModelAssembler;
-import com.baisebreno.learning_spring_api.api.model.KitchenModel;
 import com.baisebreno.learning_spring_api.api.model.OrderModel;
 import com.baisebreno.learning_spring_api.api.model.OrderSummaryModel;
 import com.baisebreno.learning_spring_api.api.model.input.OrderInput;
+import com.baisebreno.learning_spring_api.core.data.PageableTranslator;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
 import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.Order;
@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/orders")
@@ -49,6 +51,8 @@ public class OrdersController {
 
     @GetMapping
     public Page<OrderSummaryModel> search(OrderFilter orderFilter,@PageableDefault(size = 5) Pageable pageable){
+        pageable = translatePageable(pageable);
+
         Page<Order> orderPage = orderRepository.findAll(OrderSpecs.withFilter(orderFilter), pageable);
         List<OrderSummaryModel> summaryModels = summaryModelAssembler.toCollectionModel(orderPage.getContent());
 
@@ -82,4 +86,22 @@ public class OrdersController {
 
     @DeleteMapping("/{orderId}")
     public void deleteOrder(){}
+
+    private Pageable translatePageable(Pageable apiPageable ){
+        var mapping = Map.of(
+                "orderCode", "code",
+                "subtotal", "subtotal",
+                "deliveryRate", "deliveryRate",
+                "total", "total",
+                "createdDate", "createdDate",
+                "restaurant.name", "restaurant.name",
+                "restaurant.id", "restaurant.id",
+                "user.id", "user.id",
+                "user.name", "user.name"
+        );
+
+        return PageableTranslator.translate(apiPageable, mapping);
+
+    }
+
 }
