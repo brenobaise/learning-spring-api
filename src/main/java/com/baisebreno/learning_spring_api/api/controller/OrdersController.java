@@ -50,7 +50,7 @@ public class OrdersController {
     OrderRepository orderRepository;
 
     @GetMapping
-    public Page<OrderSummaryModel> search(OrderFilter orderFilter,@PageableDefault(size = 5) Pageable pageable){
+    public Page<OrderSummaryModel> search(OrderFilter orderFilter, @PageableDefault(size = 5) Pageable pageable){
         pageable = translatePageable(pageable);
 
         Page<Order> orderPage = orderRepository.findAll(OrderSpecs.withFilter(orderFilter), pageable);
