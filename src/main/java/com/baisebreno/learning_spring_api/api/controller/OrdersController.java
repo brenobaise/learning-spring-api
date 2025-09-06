@@ -12,7 +12,7 @@ import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundExcept
 import com.baisebreno.learning_spring_api.domain.model.Order;
 import com.baisebreno.learning_spring_api.domain.model.User;
 import com.baisebreno.learning_spring_api.domain.repository.OrderRepository;
-import com.baisebreno.learning_spring_api.domain.repository.filter.OrderFilter;
+import com.baisebreno.learning_spring_api.domain.filter.OrderFilter;
 import com.baisebreno.learning_spring_api.domain.service.FireOrderService;
 import com.baisebreno.learning_spring_api.domain.service.OrderRegistryService;
 import com.baisebreno.learning_spring_api.infrastructure.repository.spec.OrderSpecs;

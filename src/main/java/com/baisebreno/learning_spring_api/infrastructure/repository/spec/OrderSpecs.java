@@ -1,7 +1,7 @@
 package com.baisebreno.learning_spring_api.infrastructure.repository.spec;
 
 import com.baisebreno.learning_spring_api.domain.model.Order;
-import com.baisebreno.learning_spring_api.domain.repository.filter.OrderFilter;
+import com.baisebreno.learning_spring_api.domain.filter.OrderFilter;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
