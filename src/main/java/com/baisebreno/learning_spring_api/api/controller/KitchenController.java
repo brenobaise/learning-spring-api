@@ -9,6 +9,10 @@ import com.baisebreno.learning_spring_api.domain.repository.KitchenRepository;
 import com.baisebreno.learning_spring_api.domain.service.KitchenRegistryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +39,15 @@ public class KitchenController {
     private KitchenInputDisassembler kitchenInputDisassembler;
 
     @GetMapping()
-    public List<KitchenModel> getAll() {
-        return kitchenModelAssembler.toCollectionModel(kitchenRepository.findAll());
+    public Page<KitchenModel> getAll(@PageableDefault(size = 5) Pageable pageable) {
+
+        Page<Kitchen> kitchensPage = kitchenRepository.findAll(pageable);
+
+        List<KitchenModel> kitchensModel = kitchenModelAssembler
+                .toCollectionModel(kitchensPage.getContent());
+
+        Page<KitchenModel> kitchenModelsPage = new PageImpl<>(kitchensModel, pageable, kitchensPage.getTotalElements());
+         return kitchenModelsPage;
     }
 
 
@@ -68,7 +79,7 @@ public class KitchenController {
      * Updates a {@link Kitchen} entity based on a given id.
      *
      * @param id      the id of the target entity.
-     * @param kitchen The representational model carrying the new properties.
+     * @param kitchenInputModel The representational model carrying the new properties.
      * @return {@code 200 | 404} status code
      */
     @PutMapping("/{id}")

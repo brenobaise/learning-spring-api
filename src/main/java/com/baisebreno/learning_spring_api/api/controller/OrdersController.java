@@ -3,6 +3,7 @@ package com.baisebreno.learning_spring_api.api.controller;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderInputAssembler;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderModelAssembler;
 import com.baisebreno.learning_spring_api.api.assembler.orders.OrderSummaryModelAssembler;
+import com.baisebreno.learning_spring_api.api.model.KitchenModel;
 import com.baisebreno.learning_spring_api.api.model.OrderModel;
 import com.baisebreno.learning_spring_api.api.model.OrderSummaryModel;
 import com.baisebreno.learning_spring_api.api.model.input.OrderInput;
@@ -16,6 +17,10 @@ import com.baisebreno.learning_spring_api.domain.service.FireOrderService;
 import com.baisebreno.learning_spring_api.domain.service.OrderRegistryService;
 import com.baisebreno.learning_spring_api.infrastructure.repository.spec.OrderSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +34,7 @@ public class OrdersController {
     OrderRegistryService orderRegistryService;
 
     @Autowired
-    OrderSummaryModelAssembler orderSummaryModel;
+    OrderSummaryModelAssembler summaryModelAssembler;
     @Autowired
     OrderModelAssembler orderModelAssembler;
 
@@ -43,8 +48,12 @@ public class OrdersController {
     OrderRepository orderRepository;
 
     @GetMapping
-    public List<OrderSummaryModel> search(OrderFilter orderFilter){
-        return orderSummaryModel.toCollectionModel(orderRepository.findAll(OrderSpecs.withFilter(orderFilter)));
+    public Page<OrderSummaryModel> search(OrderFilter orderFilter,@PageableDefault(size = 5) Pageable pageable){
+        Page<Order> orderPage = orderRepository.findAll(OrderSpecs.withFilter(orderFilter), pageable);
+        List<OrderSummaryModel> summaryModels = summaryModelAssembler.toCollectionModel(orderPage.getContent());
+
+        return new PageImpl<>(summaryModels, pageable, orderPage.getTotalElements());
+
 
     }
 
