@@ -11,6 +11,7 @@ import com.baisebreno.learning_spring_api.domain.service.PhotoStorageService;
 import com.baisebreno.learning_spring_api.domain.service.ProductRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -104,5 +105,13 @@ public class RestaurantProductPhotoController {
         if(!compatible){
             throw new HttpMediaTypeNotAcceptableException(acceptedMediaTypes);
         }
+    }
+
+
+    @DeleteMapping()
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deletePhoto(@PathVariable Long restaurantId,
+                            @PathVariable Long productId) {
+        catalogueService.deletePhoto(restaurantId,productId);
     }
 }

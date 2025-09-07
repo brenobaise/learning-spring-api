@@ -77,4 +77,13 @@ public class CatalogueService {
                 .orElseThrow(() -> new ProductPhotoNotFoundException(restaurantId, productId));
     }
 
+    @Transactional
+    public void deletePhoto(Long restaurantId, Long productId){
+        ProductPhoto productPhoto = findOne(restaurantId,productId);
+
+        productRepository.deletePhoto(productPhoto);
+        productRepository.flush();
+        photoStorageService.remove(productPhoto.getFileName());
+    }
+
 }
