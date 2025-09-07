@@ -222,8 +222,8 @@ GET /restaurants
 
 ## **Roadmap**
 - [ ] **Authentication & Authorization** – JWT-based authentication with role-based access control
-- [ ] **Pagination, Sorting, Filtering** for all list endpoints
-- [ ] **File Storage Abstraction** – Product photos with local/S3 storage
+- [X] **Pagination, Sorting, Filtering** for all list endpoints
+- [X] **File Storage Abstraction** – Product photos with local/S3 storage
 - [X] **DTOs & Validation** – Standardized request/response models with validation
 - [X] **Database Migrations** – Version-controlled schema changes with Flyway
 - [ ] **Caching** – For read-heavy endpoints like kitchens/products
