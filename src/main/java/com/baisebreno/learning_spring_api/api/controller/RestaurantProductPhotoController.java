@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/restaurants/{restaurantId}/products/{productId}/photo")
@@ -42,7 +44,7 @@ public class RestaurantProductPhotoController {
                                          @Valid ProductPhotoInput productPhotoInput) throws IOException {
 
         // identifies if a product exists
-        Product product = productRegistryService.findOne(restaurantId,productId);
+        Product product = productRegistryService.findOne(restaurantId, productId);
 
         MultipartFile file = productPhotoInput.getFile();
 
@@ -61,26 +63,46 @@ public class RestaurantProductPhotoController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ProductPhotoModel getPhoto(@PathVariable Long restaurantId,
-                                      @PathVariable Long productId){
+                                      @PathVariable Long productId) {
         ProductPhoto productPhoto = catalogueService.findOne(restaurantId, productId);
 
         return productPhotoModelAssembler.toModel(productPhoto);
     }
 
-    @GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<InputStreamResource> servePhoto(@PathVariable Long restaurantId,
-                           @PathVariable Long productId){
+    @GetMapping()
+    public ResponseEntity<InputStreamResource> servePhoto(
+            @PathVariable Long restaurantId,
+            @PathVariable Long productId,
+            @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
+
         try {
             ProductPhoto productPhoto = catalogueService.findOne(restaurantId, productId);
+
+            MediaType mediaTypePhoto = MediaType.parseMediaType(productPhoto.getContentType());
+            List<MediaType> acceptedMediaTypes = MediaType.parseMediaTypes(acceptHeader);
+
+
+            verifyMediaTypeCompatibility(mediaTypePhoto, acceptedMediaTypes);
 
             InputStream inputStream = photoStorageService.getFile(productPhoto.getFileName());
 
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
+                    .contentType(mediaTypePhoto)
                     .body(new InputStreamResource(inputStream));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    private void verifyMediaTypeCompatibility(MediaType mediaTypePhoto, List<MediaType> acceptedMediaTypes)
+            throws HttpMediaTypeNotAcceptableException {
+
+        boolean compatible = acceptedMediaTypes.stream()
+                .anyMatch(acceptedMediaType -> acceptedMediaType.isCompatibleWith(mediaTypePhoto));
+
+        if(!compatible){
+            throw new HttpMediaTypeNotAcceptableException(acceptedMediaTypes);
         }
     }
 }
