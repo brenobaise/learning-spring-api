@@ -46,6 +46,21 @@ public class LocalPhotoStorageService implements PhotoStorageService {
         }
     }
 
+    /**
+     * Deletes a previous file inside the catalogue folder.
+     * @param fileName the target file name.
+     */
+    @Override
+    public void remove(String fileName) {
+        try {
+            Path filePath = getFilePath(fileName);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new StorageException("Not possible to delete file", e.getCause());
+        }
+
+    }
+
     private Path getFilePath(String fileName) {
         return photoDirectory.resolve(Path.of(fileName));
     }

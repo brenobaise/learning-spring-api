@@ -12,6 +12,20 @@ public interface PhotoStorageService {
 
     void store(NewPhoto newPhoto);
 
+    void remove(String fileName);
+
+    /**
+     * Saves the new photo on the catalogue folder. And, removes the old/previous file.
+     * @param existingFileName current file in the folder
+     * @param photo the new photo to replace.
+     */
+    default void replace(String existingFileName, NewPhoto photo){
+        this.store(photo);
+        if(existingFileName !=null){
+            this.remove(existingFileName);
+        }
+    }
+
     /**
      * Appends a UUID to a given String representing the file name.
      * @param originalName the file name
@@ -20,7 +34,6 @@ public interface PhotoStorageService {
     default String generateFileName(String originalName){
         return UUID.randomUUID().toString() + "_" + originalName;
     }
-
 
     @Getter
     @Builder

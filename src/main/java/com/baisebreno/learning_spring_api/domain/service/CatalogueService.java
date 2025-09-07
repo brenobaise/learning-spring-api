@@ -39,14 +39,17 @@ public class CatalogueService {
 
         // generates a new file name in case there are multiple or different photos with the same name.
         String newFileName = photoStorageService.generateFileName(photo.getFileName());
+        String existingFileName = null;
 
         // validates if there is a product at the given restaurant
-        Optional<ProductPhoto> foundPhoto = productRepository
+        Optional<ProductPhoto> existingPhoto = productRepository
                 .findPhotoById(restaurantId, productId);
 
         // if there is a current photo, delete it
-        foundPhoto.ifPresent(productPhoto -> productRepository.deletePhoto(productPhoto));
-
+        if(existingPhoto.isPresent()){
+            existingFileName = existingPhoto.get().getFileName();
+            productRepository.deletePhoto(existingPhoto.get());
+        }
 
         // sets the new file name before saving onto the database
         photo.setFileName(newFileName);
@@ -60,11 +63,11 @@ public class CatalogueService {
                 .inputStream(fileData)
                 .build();
 
-        // proceeds with physically storing the photo onto a directory
-        photoStorageService.store(newPhoto);
+
+        // Deletes previous file if it exists, saves the new photo
+        photoStorageService.replace(existingFileName, newPhoto);
 
         return photo;
-
     }
 
 
