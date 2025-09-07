@@ -10,6 +10,8 @@ import java.util.UUID;
 @Service
 public interface PhotoStorageService {
 
+    InputStream getFile(String fileName);
+
     void store(NewPhoto newPhoto);
 
     void remove(String fileName);

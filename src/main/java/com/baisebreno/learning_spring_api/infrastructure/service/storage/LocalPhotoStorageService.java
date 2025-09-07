@@ -8,11 +8,13 @@ import org.springframework.util.FileCopyUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 @Service
-public class LocalPhotoStorageService implements PhotoStorageService {
+public
+class LocalPhotoStorageService implements PhotoStorageService {
 
     @Value("${algafood.storage.local.photo-directory}")
     private String photoDirectoryProp; // <— inject as String
@@ -29,6 +31,22 @@ public class LocalPhotoStorageService implements PhotoStorageService {
         Files.createDirectories(this.photoDirectory);
         // Optional: log the resolved absolute path for sanity
         System.out.println("Photo dir: " + this.photoDirectory.toAbsolutePath());
+    }
+
+    /**
+     * Fetches a file from the catalogue folder.
+     * @param fileName the file's name to be read.
+     * @return {@link InputStream} to read the file
+     */
+    @Override
+    public InputStream getFile(String fileName) {
+        try{
+            Path filePath = getFilePath(fileName);
+            return Files.newInputStream(filePath);
+
+        }catch (Exception e){
+            throw new StorageException("Could not find file", e);
+        }
     }
 
     @Override
