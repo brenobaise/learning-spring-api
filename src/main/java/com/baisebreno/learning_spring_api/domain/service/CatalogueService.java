@@ -1,5 +1,7 @@
 package com.baisebreno.learning_spring_api.domain.service;
 import static com.baisebreno.learning_spring_api.domain.service.PhotoStorageService.NewPhoto;
+
+import com.baisebreno.learning_spring_api.domain.exceptions.ProductPhotoNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.ProductPhoto;
 import com.baisebreno.learning_spring_api.domain.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +72,9 @@ public class CatalogueService {
         return photo;
     }
 
+    public ProductPhoto findOne(Long restaurantId, Long productId){
+        return productRepository.findPhotoById(restaurantId, productId)
+                .orElseThrow(() -> new ProductPhotoNotFoundException(restaurantId, productId));
+    }
 
 }

@@ -6,6 +6,6 @@ public class ProductNotFoundException extends EntityNotFoundException {
     }
 
     public ProductNotFoundException(Long productId, Long restaurantId){
-        this(String.format("Product of id %d for Restaurand id %d,  not found.", productId, restaurantId));
+        this(String.format("Product of id %d for Restaurant id %d,  not found.", productId, restaurantId));
     }
 }

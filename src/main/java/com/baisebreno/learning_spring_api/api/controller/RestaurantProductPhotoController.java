@@ -48,4 +48,13 @@ public class RestaurantProductPhotoController {
         ProductPhoto savedPhoto = catalogueService.save(photo, file.getInputStream());
         return productPhotoModelAssembler.toModel(savedPhoto);
     }
+
+    @GetMapping()
+    public ProductPhotoModel getPhoto(@PathVariable Long restaurantId,
+                                      @PathVariable Long productId){
+        ProductPhoto productPhoto = catalogueService.findOne(restaurantId, productId);
+
+        return productPhotoModelAssembler.toModel(productPhoto);
+
+    }
 }
