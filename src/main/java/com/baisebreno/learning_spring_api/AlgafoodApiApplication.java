@@ -1,6 +1,6 @@
 package com.baisebreno.learning_spring_api;
 
-import com.baisebreno.learning_spring_api.infrastructure.CustomJpaRepositoryImpl;
+import com.baisebreno.learning_spring_api.infrastructure.repository.CustomJpaRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

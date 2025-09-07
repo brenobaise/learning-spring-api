@@ -1,4 +1,4 @@
-package com.baisebreno.learning_spring_api.infrastructure;
+package com.baisebreno.learning_spring_api.infrastructure.repository;
 
 import com.baisebreno.learning_spring_api.domain.repository.CustomJpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;

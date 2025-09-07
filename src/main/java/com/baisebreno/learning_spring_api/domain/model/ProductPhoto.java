@@ -29,4 +29,12 @@ public class ProductPhoto {
     @MapsId
     private Product product;
 
+    public Long getRestaurantId(){
+        if(getProduct() != null){
+            return getProduct().getRestaurant().getId();
+        }
+
+        return  null;
+    }
+
 }

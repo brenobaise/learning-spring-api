@@ -1,4 +1,4 @@
-package com.baisebreno.learning_spring_api.infrastructure;
+package com.baisebreno.learning_spring_api.infrastructure.repository;
 
 
 import com.baisebreno.learning_spring_api.domain.model.Restaurant;
@@ -15,7 +15,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
