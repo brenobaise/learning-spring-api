@@ -12,7 +12,7 @@ import com.baisebreno.learning_spring_api.domain.service.PhotoStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
+import java.net.URL;
 
 @Service
 public class S3PhotoStorageService implements PhotoStorageService {
@@ -29,8 +29,13 @@ public class S3PhotoStorageService implements PhotoStorageService {
      * @return
      */
     @Override
-    public InputStream getFile(String fileName) {
-        return null;
+    public FetchedPhoto getFile(String fileName) {
+        String pathFile = getFilePath(fileName);
+        URL url = amazonS3.getUrl(storageProperties.getS3().getBucket(), pathFile);
+
+        return FetchedPhoto.builder()
+                .url(url.toString())
+                .build();
     }
 
     /**

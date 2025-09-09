@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public interface PhotoStorageService {
 
-    InputStream getFile(String fileName);
+    FetchedPhoto getFile(String fileName);
 
     void store(NewPhoto newPhoto);
 
@@ -43,5 +43,21 @@ public interface PhotoStorageService {
         private String fileName;
         private InputStream inputStream;
         private String contentType;
+    }
+
+
+    @Getter
+    @Builder
+    class FetchedPhoto {
+        private InputStream inputStream;
+        private String url;
+
+        public boolean hasUrl(){
+            return url != null;
+        }
+
+        public boolean hasInputStream(){
+            return  inputStream != null;
+        }
     }
 }
