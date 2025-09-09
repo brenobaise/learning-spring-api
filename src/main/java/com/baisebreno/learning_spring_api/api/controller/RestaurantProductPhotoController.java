@@ -112,6 +112,6 @@ public class RestaurantProductPhotoController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deletePhoto(@PathVariable Long restaurantId,
                             @PathVariable Long productId) {
-        catalogueService.deletePhoto(restaurantId,productId);
+        catalogueService.remove(restaurantId,productId);
     }
 }

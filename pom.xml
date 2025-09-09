@@ -29,6 +29,7 @@
     <properties>
         <java.version>17</java.version>
         <squiggly.version>1.3.18</squiggly.version>
+        <aws-java-sdk-s3.version>1.12.791</aws-java-sdk-s3.version>
     </properties>
     <dependencies>
         <dependency>
@@ -55,6 +56,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
 
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk-s3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

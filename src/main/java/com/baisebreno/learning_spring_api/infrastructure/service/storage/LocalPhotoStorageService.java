@@ -1,85 +1,58 @@
-package com.baisebreno.learning_spring_api.infrastructure.service.storage;
-
-import com.baisebreno.learning_spring_api.domain.exceptions.StorageException;
-import com.baisebreno.learning_spring_api.domain.service.PhotoStorageService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-@Service
-public
-class LocalPhotoStorageService implements PhotoStorageService {
-
-    @Value("${algafood.storage.local.photo-directory}")
-    private String photoDirectoryProp; // <— inject as String
-
-    private Path photoDirectory;
-
-    @PostConstruct
-    void init() throws IOException, URISyntaxException {
-        // Support both "C:/..." and "file:///C:/..."
-        this.photoDirectory = photoDirectoryProp.startsWith("file:")
-                ? Path.of(new java.net.URI(photoDirectoryProp))
-                : Path.of(photoDirectoryProp);
-
-        Files.createDirectories(this.photoDirectory);
-        // Optional: log the resolved absolute path for sanity
-        System.out.println("Photo dir: " + this.photoDirectory.toAbsolutePath());
-    }
-
-    /**
-     * Fetches a file from the catalogue folder.
-     * @param fileName the file's name to be read.
-     * @return {@link InputStream} to read the file
-     */
-    @Override
-    public InputStream getFile(String fileName) {
-        try{
-            Path filePath = getFilePath(fileName);
-            return Files.newInputStream(filePath);
-
-        }catch (Exception e){
-            throw new StorageException("Could not find file", e);
-        }
-    }
-
-    @Override
-    public void store(NewPhoto newPhoto) {
-        try {
-            Path filePath = getFilePath(newPhoto.getFileName());
-            // ensure parent dirs for the specific file too (in case fileName contains subfolders)
-            Files.createDirectories(filePath.getParent());
-            // Use try-with-resources so the OutputStream is closed even on error
-            try (var out = Files.newOutputStream(filePath)) {
-                FileCopyUtils.copy(newPhoto.getInputStream(), out);
-            }
-        } catch (Exception e) {
-            throw new StorageException("Not possible to save file: " + newPhoto.getFileName(), e);
-        }
-    }
-
-    /**
-     * Deletes a previous file inside the catalogue folder.
-     * @param fileName the target file name.
-     */
-    @Override
-    public void remove(String fileName) {
-        try {
-            Path filePath = getFilePath(fileName);
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            throw new StorageException("Not possible to delete file", e.getCause());
-        }
-
-    }
-
-    private Path getFilePath(String fileName) {
-        return photoDirectory.resolve(Path.of(fileName));
-    }
-}
+//package com.baisebreno.learning_spring_api.infrastructure.service.storage;
+//
+//import com.baisebreno.learning_spring_api.core.storage.StorageProperties;
+//import com.baisebreno.learning_spring_api.domain.exceptions.StorageException;
+//import com.baisebreno.learning_spring_api.domain.service.PhotoStorageService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.util.FileCopyUtils;
+//
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.nio.file.Files;
+//import java.nio.file.Path;
+//
+////@Service
+//public class LocalPhotoStorageService implements PhotoStorageService {
+//
+//    @Autowired
+//    private StorageProperties storageProperties;
+//
+//    @Override
+//    public InputStream getFile(String fileName) {
+//        try {
+//            Path filePath = getFilePath(fileName);
+//            return Files.newInputStream(filePath);
+//        } catch (Exception e) {
+//            throw new StorageException("Could not find file", e);
+//        }
+//    }
+//
+//    @Override
+//    public void store(NewPhoto newPhoto) {
+//        try {
+//            Path filePath = getFilePath(newPhoto.getFileName());
+//            Files.createDirectories(filePath.getParent());
+//            try (var out = Files.newOutputStream(filePath)) {
+//                FileCopyUtils.copy(newPhoto.getInputStream(), out);
+//            }
+//        } catch (Exception e) {
+//            throw new StorageException("Not possible to save file: " + newPhoto.getFileName(), e);
+//        }
+//    }
+//
+//    @Override
+//    public void remove(String fileName) {
+//        try {
+//            Path filePath = getFilePath(fileName);
+//            Files.deleteIfExists(filePath);
+//        } catch (IOException e) {
+//            throw new StorageException("Not possible to delete file", e);
+//        }
+//    }
+//
+//
+//    private Path getFilePath(String fileName) {
+//        return storageProperties.getLocal().getPhotoDirectory()
+//                .resolve(Path.of(fileName));
+//    }
+//}

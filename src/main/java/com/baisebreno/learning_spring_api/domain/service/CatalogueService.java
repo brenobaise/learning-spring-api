@@ -62,8 +62,10 @@ public class CatalogueService {
         // to be saved in local storage
         NewPhoto newPhoto = NewPhoto.builder()
                 .fileName(newFileName)
+                .contentType(photo.getContentType())
                 .inputStream(fileData)
                 .build();
+
 
 
         // Deletes previous file if it exists, saves the new photo
@@ -78,12 +80,14 @@ public class CatalogueService {
     }
 
     @Transactional
-    public void deletePhoto(Long restaurantId, Long productId){
+    public void remove(Long restaurantId, Long productId){
         ProductPhoto productPhoto = findOne(restaurantId,productId);
 
         productRepository.deletePhoto(productPhoto);
         productRepository.flush();
+
         photoStorageService.remove(productPhoto.getFileName());
+
     }
 
 }
