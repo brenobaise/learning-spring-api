@@ -424,7 +424,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
 
         String detail = String.format("The resource %s you tried to access, does not exist.", ex.getRequestURL());
-        Problem problem = createProblemBuilder(status,problemType,detail,ex.getMessage(), OffsetDateTime.now())
+        Problem problem = createProblemBuilder(status,problemType,detail,INTERNAL_SERVER_ERROR_MESSAGE, OffsetDateTime.now())
                 .build();
 
         return handleExceptionInternal(ex,problem,headers,status,request);
