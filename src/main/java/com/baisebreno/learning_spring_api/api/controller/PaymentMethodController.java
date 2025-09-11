@@ -10,11 +10,14 @@ import com.baisebreno.learning_spring_api.domain.model.PaymentMethod;
 import com.baisebreno.learning_spring_api.domain.repository.PaymentTypeRepository;
 import com.baisebreno.learning_spring_api.domain.service.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/payments")
@@ -29,9 +32,15 @@ public class PaymentMethodController {
     PaymentMethodModelAssembler assembler;
 
     @GetMapping()
-    public List<PaymentMethodModel> getAll(){
-        return assembler.toCollectionModel(paymentTypeRepository.findAll());
+    public ResponseEntity<List<PaymentMethodModel>> getAll(){
+        List<PaymentMethodModel> paymentMethodModels =
+                assembler.toCollectionModel(paymentTypeRepository.findAll());
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(paymentMethodModels);
     }
+
     @GetMapping("/{id}")
     public PaymentMethodModel find(@PathVariable Long id){
         return assembler.toModel(paymentMethodService.findOne(id));
