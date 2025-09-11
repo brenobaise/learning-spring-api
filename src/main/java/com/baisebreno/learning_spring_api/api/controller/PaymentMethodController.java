@@ -32,17 +32,18 @@ public class PaymentMethodController {
     PaymentMethodModelAssembler assembler;
 
     @GetMapping()
-    public ResponseEntity<List<PaymentMethodModel>> getAll(){
+    public ResponseEntity<List<PaymentMethodModel>> getAll() {
         List<PaymentMethodModel> paymentMethodModels =
                 assembler.toCollectionModel(paymentTypeRepository.findAll());
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .cacheControl(CacheControl.noCache())
                 .body(paymentMethodModels);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentMethodModel> find(@PathVariable Long id){
+    public ResponseEntity<PaymentMethodModel> find(@PathVariable Long id) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
                 .body(assembler.toModel(paymentMethodService.findOne(id)));
@@ -51,18 +52,18 @@ public class PaymentMethodController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentMethodModel create(@Valid @RequestBody PaymentMethodInputModel paymentMethodInputModel){
-        try{
+    public PaymentMethodModel create(@Valid @RequestBody PaymentMethodInputModel paymentMethodInputModel) {
+        try {
             PaymentMethod paymentMethod = assembler.disassemble(paymentMethodInputModel);
             return assembler.toModel(paymentMethodService.save(paymentMethod));
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new BusinessException(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
     public PaymentMethodModel update(@PathVariable Long id,
-                                     @Valid @RequestBody PaymentMethodInputModel paymentMethodInputModel){
+                                     @Valid @RequestBody PaymentMethodInputModel paymentMethodInputModel) {
         PaymentMethod currentMethod = paymentMethodService.findOne(id);
 
         assembler.copyToDomainObject(paymentMethodInputModel, currentMethod);
@@ -76,7 +77,7 @@ public class PaymentMethodController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable Long id) {
         paymentMethodService.delete(id);
     }
 }
