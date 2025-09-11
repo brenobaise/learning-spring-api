@@ -42,8 +42,10 @@ public class PaymentMethodController {
     }
 
     @GetMapping("/{id}")
-    public PaymentMethodModel find(@PathVariable Long id){
-        return assembler.toModel(paymentMethodService.findOne(id));
+    public ResponseEntity<PaymentMethodModel> find(@PathVariable Long id){
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(assembler.toModel(paymentMethodService.findOne(id)));
 
     }
 
