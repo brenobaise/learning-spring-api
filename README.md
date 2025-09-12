@@ -14,7 +14,7 @@ My future plans are:
 - To add Spring Security.
 - To add another database provider, like Postgresql
 - ~~to add Flyway for database migrations.~~ _Implemented_.
-- to add api documentation like Swagger
+- ~~to add api documentation like Swagger~~ Partly implemented.
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
 ---
