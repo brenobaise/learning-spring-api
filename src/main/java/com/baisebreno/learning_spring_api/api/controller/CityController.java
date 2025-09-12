@@ -2,16 +2,13 @@ package com.baisebreno.learning_spring_api.api.controller;
 
 import com.baisebreno.learning_spring_api.api.assembler.city.CityInputDisassembler;
 import com.baisebreno.learning_spring_api.api.assembler.city.CityModelAssembler;
-import com.baisebreno.learning_spring_api.api.exceptionhandler.Problem;
 import com.baisebreno.learning_spring_api.api.model.CityModel;
 import com.baisebreno.learning_spring_api.api.model.input.CityInputModel;
 import com.baisebreno.learning_spring_api.domain.exceptions.BusinessException;
-import com.baisebreno.learning_spring_api.domain.exceptions.EntityNotFoundException;
 import com.baisebreno.learning_spring_api.domain.exceptions.GeographicalStateNotFoundException;
 import com.baisebreno.learning_spring_api.domain.model.City;
 import com.baisebreno.learning_spring_api.domain.repository.CityRepository;
 import com.baisebreno.learning_spring_api.domain.service.CityRegistryService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/cities")
@@ -53,7 +52,22 @@ public class CityController {
      */
     @GetMapping("/{id}")
     public CityModel find(@PathVariable Long id) {
-        return assembler.toModel(cityRegistryService.findOne(id));
+        CityModel cityModel =  assembler.toModel(cityRegistryService.findOne(id));
+
+        // creates a link as ...cities/id
+        cityModel.add(linkTo(CityController.class)
+                .slash(cityModel.getId())
+                .withSelfRel());
+
+        // creates a link to collections .../cities
+        cityModel.add(linkTo(CityController.class)
+                .withRel("cities"));
+
+        // creates a link as .../states/stateId
+        cityModel.getState().add(linkTo(GeographicalStateController.class)
+                .slash(cityModel.getState().getId())
+                .withSelfRel());
+        return cityModel;
     }
 
     /**
