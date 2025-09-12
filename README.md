@@ -4,6 +4,8 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)
 ![MySQL](https://img.shields.io/badge/MySQL-8%2B-orange)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+[![API Docs](https://img.shields.io/badge/docs-Swagger_UI-blue)](https://brenobaise.github.io/learning-spring-api/)
+
 
 A **REST API** for managing restaurant-related tasks.  
 This project is **a work in progress**, and features will be added progressively.
@@ -129,49 +131,18 @@ Using Maven wrapper:
 
 ## **API Reference**
 
-### **Kitchens**
-| Method | Endpoint         | Description           |
-|--------|------------------|-----------------------|
-| GET    | `/kitchens`      | List all kitchens     |
-| POST   | `/kitchens`      | Create a kitchen      |
-| GET    | `/kitchens/{id}` | Get a kitchen by ID   |
-| PUT    | `/kitchens/{id}` | Update a kitchen      |
-| DELETE | `/kitchens/{id}` | Delete a kitchen      |
+This project uses **Swagger / OpenAPI** for API documentation.  
+👉 [Interactive API Docs](https://brenobaise.github.io/learning-spring-api/)
 
----
+![openapi.png](src/images/openapi.png)
+### Example Endpoints
+- **Kitchens**
+    - `GET /kitchens` – List all kitchens
+    - `POST /kitchens` – Create a kitchen
+- **Restaurants**
+    - `GET /restaurants` – List all restaurants
+    - `POST /restaurants` – Create a restaurant
 
-### **Restaurants**
-| Method | Endpoint             | Description            |
-|--------|----------------------|------------------------|
-| GET    | `/restaurants`       | List all restaurants   |
-| POST   | `/restaurants`       | Create a restaurant    |
-| GET    | `/restaurants/{id}`  | Get a restaurant by ID |
-| PUT    | `/restaurants/{id}`  | Update a restaurant    |
-| DELETE | `/restaurants/{id}`  | Delete a restaurant    |
-
----
-
-### **States**
-| Method | Endpoint         | Description         |
-|--------|------------------|---------------------|
-| GET    | `/states`        | List all states     |
-| POST   | `/states`        | Create a state      |
-| GET    | `/states/{id}`   | Get a state by ID   |
-| PUT    | `/states/{id}`   | Update a state      |
-| DELETE | `/states/{id}`   | Delete a state      |
-
----
-
-### **Cities**
-| Method | Endpoint         | Description         |
-|--------|------------------|---------------------|
-| GET    | `/cities`        | List all cities     |
-| POST   | `/cities`        | Create a city       |
-| GET    | `/cities/{id}`   | Get a city by ID    |
-| PUT    | `/cities/{id}`   | Update a city       |
-| DELETE | `/cities/{id}`   | Delete a city       |
-
----
 
 ## **Example Requests**
 
