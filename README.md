@@ -19,6 +19,7 @@ My future plans are:
 - ~~to add api documentation like Swagger~~ Partly implemented.
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
+[👉 See Latest Updates (API Reference)](#api-reference)
 ---
 
 ## **Table of Contents**
@@ -53,7 +54,7 @@ My future plans are:
 - Deployment for public access
 - TESTS !!! 
 
-- Javadocs for implemented classes.
+- ~~Javadocs for implemented classes.~~ OpenAPI docs implemented and Swagger UI.
 > **Note:** I recently started uploading this project to GitHub. I had no initial plans to share it, but decided to start somewhere—therefore, not all classes are documented yet.
 
 ---
@@ -114,11 +115,12 @@ spring.jpa.show-sql=true
 ```
 
 > **Note:** ~~Hibernate will automatically create the tables on first run.~~
-> 
+>
 > As of [Commit b3fb9f5](https://github.com/brenobaise/learning-spring-api/commit/b3fb9f5e17eac6122d79f1cd18b40e1806eabd0d) Flyway is now takes control of table creation and test data. 
 
-~~I have also provided a `import.sql` file to generate some data into the database, feel free to play around with it.~~ <br>
-As of [Commit b3fb9f5](https://github.com/brenobaise/learning-spring-api/commit/b3fb9f5e17eac6122d79f1cd18b40e1806eabd0d) `afterMigrate.sql` generates test data automatically.
+> **Note:** ~~I have also provided a `import.sql` file to generate some data into the database, feel free to play around with it.~~ <br>
+>
+> As of [Commit b3fb9f5](https://github.com/brenobaise/learning-spring-api/commit/b3fb9f5e17eac6122d79f1cd18b40e1806eabd0d) `afterMigrate.sql` generates test data automatically.
 ---
 
 ### **2) Run the Application**
@@ -197,7 +199,7 @@ GET /restaurants
 - [X] **File Storage Abstraction** – Product photos with local/S3 storage
 - [X] **DTOs & Validation** – Standardized request/response models with validation
 - [X] **Database Migrations** – Version-controlled schema changes with Flyway
-- [ ] **Caching** – For read-heavy endpoints like kitchens/products
+- [X] **Caching** – For read-heavy endpoints like kitchens/products
 - [ ] **Observability** – Logging, metrics, tracing
 - [ ] **Production Configuration** – Secure, profile-based configurations
 
