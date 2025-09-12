@@ -1,0 +1,23 @@
+package com.baisebreno.learning_spring_api.core.springdoc;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringDocConfig {
+
+    @Bean
+    public OpenAPI openAPI(){
+        return  new OpenAPI()
+                .info(new Info().title("Learning Spring API")
+                        .version("v1")
+                        .description("A REST API developed with the intent of learning Spring.")
+                        .license(new License()
+                                .name("Apache 2.0")
+                                .url("http://springdoc.com"))
+                );
+    }
+}

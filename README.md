@@ -84,7 +84,7 @@ The API is designed with **Domain Driven Design (DDD)** principles, organized in
 - `domain/` → Entities, Value Objects, Services, Exceptions
 - `infra/` → Repositories, Configuration, Storage Adapters
 
-![img.png](img.png)
+![img.png](src/images/img.png)
 ---
 
 ## **Class Diagram**
