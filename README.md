@@ -137,7 +137,10 @@ This project uses **Swagger / OpenAPI** for API documentation.
 👉 [Interactive API Docs](https://brenobaise.github.io/learning-spring-api/)
 
 I have added SpringDoc and SwaggerUI to the project with the intent of having a visual demonstration of the current possibilities of the API.
-Since it's a work in progress, as I go through the code I will add more documentation for the API docs.
+Since it's a work in progress, as I go through the code I will add more documentation for the API docs. 
+
+The documentation is statically served on Github Pages, so do not be surprised if you see `localhost` somewhere, i will change this once i decide to deploy it.
+Also, all endpoints which appear on the SpringDoc html, are working and can be used.
 
 ![openapi.png](src/images/openapi.png)
 ### Example Endpoints
