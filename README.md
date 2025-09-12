@@ -19,7 +19,7 @@ My future plans are:
 - ~~to add api documentation like Swagger~~ Partly implemented.
 > If you're a **frontend developer** looking for an API to integrate with—whether to showcase your skills or learn alongside me—feel free to use this API.
 
-[👉 See Latest Updates (API Reference)](#api-reference)
+[👉 See Latest Updates (API Reference)](#api-reference) 12/09/25
 ---
 
 ## **Table of Contents**
@@ -135,6 +135,9 @@ Using Maven wrapper:
 
 This project uses **Swagger / OpenAPI** for API documentation.  
 👉 [Interactive API Docs](https://brenobaise.github.io/learning-spring-api/)
+
+I have added SpringDoc and SwaggerUI to the project with the intent of having a visual demonstration of the current possibilities of the API.
+Since it's a work in progress, as I go through the code I will add more documentation for the API docs.
 
 ![openapi.png](src/images/openapi.png)
 ### Example Endpoints
